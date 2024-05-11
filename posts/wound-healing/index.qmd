@@ -1,0 +1,687 @@
+---
+title: "Integration of microbiome, metabolome, and clinical markers to predict wound healing"
+author: "Jeremy Boyd, Ph.D."
+date: now
+date-format: long
+format:
+    html:
+        toc: true
+        toc-depth: 3
+        number-sections: true
+        colorlinks: true
+echo: false
+error: false
+warning: false
+message: false
+fig-format: svg
+bibliography: bibliography.bib
+csl: apa.csl
+categories:
+  - wound healing
+  - -omics integration
+  - diabetes
+---
+
+## Introduction
+
+Diabetes affects over 37 million Americans and one in five veterans. Diabetics are prone to the development of non-healing wounds on their feet, which can often lead to lower-limb amputation. While much is known about the wound microbiome, very few studies have investigated the interplay between microbes and metabolites in the diabetic wound microenvironment. Further, studies integrating omics-level microbiome and metabolome datasets are largely non-existent. The present work aims to address this deficit by bringing together two -omics data blocks (microbiome and metabolome) with a clinical block to predict whether or not wounds heal.
+
+Two analytic objectives will be addressed. The primary objective (see @sec-multiblock and @sec-results) is to see whether a wound healing signature can be detected that integrates across data blocks. The secondary objective (see @sec-multilevel) is to explore whether the analysis might benefit from a multilevel approach.
+
+```{r data}
+
+# NOTE: Capitalization of stuff like "R" or the "O" in mixOmics gets lost in the
+# knitting process. To maintain it do this: (1) in Zotero, put brackets around
+# stuff where capitalization needs to be maintained--e.g., "data integration
+# using R" --> "data integration using {R}"; (2) in RStudio, go to options >
+# RMarkdown > citations and check the "use Better BibTex" box.
+
+# Data are stored in this project
+dir <- "/Users/jboyd/Documents/Veterans Administration/studies/wound_healing/"
+
+# Datasets with original predictors
+orig <- read_rds(paste0(dir, "data/original_predictors.rds"))
+
+# Counts of original predictors
+meta_n_orig <- orig$meta %>%
+    select(matches("^m_")) %>%
+    ncol()
+micro_n_orig <- orig$micro %>%
+    select(matches("^otu")) %>%
+    ncol()
+clin_n_orig <- orig$clin %>%
+    select(matches("^c_")) %>%
+    ncol()
+
+# Predictor counts after preprocessing
+df <- read_feather(paste0(dir, "data/combined_omics_clinical_dataset.feather"))
+meta_n_final <- df %>%
+    select(matches("^m_")) %>%
+    ncol()
+micro_n_final <- df %>%
+    select(matches("^otu")) %>%
+    ncol()
+clin_n_final <- df %>%
+    select(matches("^c_")) %>%
+    ncol()
+
+# Read in single-block loadings
+meta_load <- read_feather(paste0(dir, "meta01/load_stable.feather"))
+micro_load <- read_feather(paste0(dir, "micro01/load_stable.feather"))
+clin_load <- read_feather(paste0(dir, "clin01/load_stable.feather"))
+
+# Number of features selected into each single-block meta
+n_meta <- nrow(meta_load)
+n_micro <- nrow(micro_load)
+n_clin <- nrow(clin_load)
+
+# Selected predictors for diablo single (ds), which is diablo with feature
+# selection based on single-block models
+predictor_summary_ds <- read_feather(
+    paste0(dir, "diablo01/predictor_summary.feather"))
+selected_n_ds <- predictor_summary_ds %>%
+    filter(!(comp1 == 0 & comp2 == 0)) %>%
+    select(block, predictor) %>%
+    unique() %>%
+    count(block, name = "ds") %>%
+    rename(Block = block)
+
+# Selected predictors for diablo CV (dcv), which is diablo with feature
+# selection based on cross-validation.
+predictor_summary_dcv <- read_feather(
+    paste0(dir, "diablo02/predictor_summary.feather"))
+selected_n_dcv <- predictor_summary_dcv %>%
+    filter(!(comp1 == 0 & comp2 == 0)) %>%
+    select(block, predictor) %>%
+    unique() %>%
+    count(block, name = "Multiblock") %>%
+    rename(Block = block)
+
+# Read in missingness for clinical
+clin_missing <- read_feather(paste0(dir, "clin01/clin_missing.feather"))
+
+# Multiblock circle data
+diablo_circle_data <- read_feather(paste0(dir, "diablo02/circle_data.feather"))
+
+# Multiblock network table
+network_table <- read_feather(paste0(dir, "diablo02/network_table.feather"))
+
+# Nodes to label, from Catherine
+to_label <- read_xlsx(paste0(dir, "data/predictors_to_label.xlsx")) %>%
+    pull(predictor)
+
+```
+
+```{r single_multi}
+
+# Summarize comp2 performance for single and multiblock models. Shows that
+# lowest multiblock error is max.dist, so use that.
+perf_sum <- bind_rows(
+    bind_rows(
+        read_rds(paste0(dir, "meta01/perf.rds"))$error.rate$BER %>%
+            as_tibble(rownames = "comp") %>%
+            mutate(block = "meta"),
+        read_rds(paste0(dir, "micro01/perf.rds"))$error.rate$BER %>%
+            as_tibble(rownames = "comp") %>%
+            mutate(block = "micro"),
+        read_rds(paste0(dir, "clin01/perf.rds"))$error.rate$BER %>%
+            as_tibble(rownames = "comp") %>%
+            mutate(block = "clin")) %>%
+        filter(comp == "comp2") %>%
+        pivot_longer(matches("dist"), names_to = "dist", values_to = "comp2") %>%
+        select(block, dist, comp2),
+    read_feather(paste0(dir, "diablo02/performance.feather")) %>%
+        filter(domain == "Overall.BER") %>%
+        mutate(block = "multi") %>%
+        select(block, dist, comp2))
+
+# Figure
+x <- perf_sum %>%
+    filter(dist == "mahalanobis.dist") %>%
+    mutate(block = case_when(
+        block == "clin" ~ "Clinical only",
+        block == "meta" ~ "Metabolome only",
+        block == "micro" ~ "Microbiome only",
+        block == "multi" ~ "Multiblock",
+        TRUE ~ "error"),
+        block = fct_reorder(block, -comp2)) %>%
+    ggplot(aes(x = block, y = comp2, group = dist, color = dist)) +
+    geom_line() +
+    scale_y_continuous(breaks = seq(0, 1, 0.01)) +
+    labs(x = "Model",
+         y = "Error") +
+    theme(legend.position = "none")
+
+```
+
+```{r performance}
+
+# Data showing performance improvement with addition of a second component
+ perf_comp <- read_feather(paste0(dir, "diablo02/performance.feather")) %>%
+            filter(domain == "Overall.BER",
+                   dist == "mahalanobis.dist") %>%
+    pivot_longer(matches("comp"), names_to = "comp", values_to = "error") %>%
+     mutate(error = error * 100)
+
+# Figure    
+y <- perf_comp %>%
+    ggplot(aes(x = comp, y = error, group = dist, color = dist)) +
+    geom_line() +
+    labs(x = "Component",
+         y = "Error") +
+    theme(legend.position = "blank")
+
+# Read in network data
+networks <- read_rds(paste0(dir, "diablo02/networks.rds"))
+
+# Read in network data
+networks_dcv <- read_rds(paste0(dir, "diablo02/networks.rds"))
+
+```
+
+## Methods
+
+### Data
+
+`r nrow(df)` debridement samples were collected from `r df %>% count(patient) %>% nrow()` patients during the normal course of wound treatment at the Boise Veterans Affairs Medical Center. 16S rRNA sequencing and ultra-high-performance liquid chromatography/tandem accurate mass spectrometry were then utilized to determine wound microbiomes and metabolomes, respectively. Clinical data were extracted from patients' medical records. The outcome measure was whether the sample was taken from a wound that failed to heal (non-healing), or from a wound that progressed to healing and remained closed for greater than thirty days (healing).
+
+### Preprocessing
+
+Data from the microbiome and metabolome blocks were processed using procedures appropriate for those data types.
+
+These additional steps were taken prior to modeling: features with near zero variance were excluded from all three blocks (microbiome, metabolome, clinical); features in the microbiome block with OTU counts less than 1% of the total were excluded; features in the microbiome block underwent the centered log transformation [@lêcao2016]; features in all blocks were standardized to zero means and unit variances [@lecao2022]. @tbl-n-feat summarizes the number of features in each block.
+
+```{r n_feat}
+#| label: tbl-n-feat
+#| tbl-cap: Feature counts before and after preprocessing.
+
+tibble(Block = c("Metabolome", "Microbiome", "Clinical"),
+       `Before preprocessing` = c(meta_n_orig, micro_n_orig, clin_n_orig),
+       `After preprocessing` = c(meta_n_final, micro_n_final, clin_n_final)) %>%
+    gt()
+
+```
+
+### Multilevel decomposition {#sec-multilevel}
+
+Data in this project are multilevel---i.e., samples are nested within patients. To determine whether discrimination between healers and non-healers might benefit from a multilevel approach, two PCAs were conducted on each of the -omics data blocks: one without and one with multilevel decomposition [@liquet2012]. The results are shown in @fig-meta-multi and @fig-micro-multi, where the plotted numbers are patient identifiers. Neither multilevel decomposition appears to reduce clustering by patients, or improve clustering by healing status. This is true for the metabolome data even when outliers are removed. The overall data pattern suggests that samples from the same patients are not correlated. Consequently, the multiblock model outlined below does not employ multilevel decomposition.
+
+```{r meta_multi}
+#| label: fig-meta-multi
+#| fig-cap: Metabolome PCA with and without multilevel decomposition. Plotted numbers are patient identifiers.
+#| fig-width: 10
+
+# Read in data
+p_meta_pca <- read_rds(paste0(dir, "meta01/p_meta_pca.rds"))
+p_meta_pca_multi <- read_rds(paste0(dir, "meta01/p_meta_pca_multi.rds"))
+
+# Figure
+theme_set(theme_classic(base_size = 12))
+bind_rows(
+    p_meta_pca$df %>% mutate(pca = "Non-multilevel"),
+    p_meta_pca_multi$df %>% mutate(pca = "Multilevel")) %>%
+    mutate(pca = fct_relevel(pca, "Non-multilevel")) %>%
+    ggplot(aes(x = x, y = y, color = group, label = names)) +
+    geom_text(size = 3) +
+    scale_color_discrete(breaks = c("Responder", "Non-responder"),
+                        labels = c("Healing", "Non-healing")) +
+    facet_wrap(~ pca) +
+    labs(x = "PC1",
+         y = "PC2",
+         color = "Group") +
+    theme(panel.spacing = unit(2, "lines"),
+          strip.background = element_blank(),
+          panel.grid.major = element_line(linewidth = 0.3))
+
+```
+
+```{r micro_multi}
+#| label: fig-micro-multi
+#| fig-cap: Microbiome PCA with and without multilevel decomposition. Plotted numbers are patient identifiers.
+#| fig-width: 10
+
+# Read in data
+p_micro_pca <- read_rds(paste0(dir, "micro01/p_micro_pca.rds"))
+p_micro_pca_multi <- read_rds(paste0(dir, "micro01/p_micro_pca_multi.rds"))
+
+# Figure
+bind_rows(
+    p_micro_pca$df %>% mutate(pca = "Non-multilevel"),
+    p_micro_pca_multi$df %>% mutate(pca = "Multilevel")) %>%
+    mutate(pca = fct_relevel(pca, "Non-multilevel")) %>%
+    ggplot(aes(x = x, y = y, color = group, label = names)) +
+    geom_text(size = 3) +
+    scale_color_discrete(breaks = c("Responder", "Non-responder"),
+                        labels = c("Healing", "Non-healing")) +
+    facet_wrap(~ pca) +
+    labs(x = "PC1",
+         y = "PC2",
+         color = "Group") +
+    theme(panel.spacing = unit(2, "lines"),
+          strip.background = element_blank(),
+          panel.grid.major = element_line(linewidth = 0.3))
+
+```
+
+### Multiblock model {#sec-multiblock}
+
+The healing versus non-healing outcome was modeled as a function of three data blocks (metabolome, microbiome, and clinical) using multiblock sparse partial least squares discriminant analysis (sPLS-DA; [@singh2019; @lecao2022; @rohart2017; @rcoreteam2024]). The optimal number of components per block was determined by fitting sPLS-DA models for each block individually and using seven-fold cross-validation with 100 repeats to select the number of components associated with the lowest balanced error rate. For the metabolome and microbiome blocks the optimal number of components was four; for the clinical block it was two. Based on these results, two components were used in the multiblock model: while not ideal for the -omics blocks, using a smaller number of components was beneficial in that it allowed for a simpler solution and acted as a hedge against overfitting.
+
+The value of the between-block weights in the design matrix was set to 0.1. This prioritized predictive accuracy while still allowing the model to learn correlations between data blocks.
+
+Finally, seven-fold cross-validation with 100 repeats was used to select the number of features per component and block associated with the lowest balanced error rate. The data grid that was explored was uniform across blocks, running from one feature to half the number of features in the block available after preprocessing (see @tbl-n-feat). This led to the number of selected features displayed in @tbl-n-feat-final.
+
+```{r n_feat_final}
+#| label: tbl-n-feat-final
+#| tbl-cap: Selected feature counts
+
+predictor_summary_dcv %>%
+    filter(!(comp1 == 0 & comp2 == 0)) %>%
+    count(block) %>%
+    mutate(block = case_when(
+        block == "meta" ~ "Metabolome",
+        block == "micro" ~ "Microbiome",
+        block == "clin" ~ "Clinical",
+        TRUE ~ "error")) %>%
+    arrange(desc(n)) %>%
+    adorn_totals() %>%
+    rename(Block = block, N = n) %>%
+    gt()
+
+```
+
+## Results {#sec-results}
+
+Final model performance was assessed using 7-fold cross-validation with 100 repeats. This gave classification error rates of `r perf_comp %>% filter(comp == "comp1") %>% pull(error) %>% format(nsmall = 2, digits = 2)`% when only component one was considered, and `r perf_comp %>% filter(comp == "comp2") %>% pull(error) %>% format(nsmall = 2, digits = 2)`% when both components were considered. These numbers indicate good performance: roughly 19 out of every 20 samples were correctly classified. Moreover, the small decrease in error from one to two components suggests that the addition of further components would lead to only marginal improvements.
+
+Panel B of @fig-circle-plots summarizes the multi-omic signature the model learned. This representation plots each of the `r sum(selected_n_dcv$Multiblock)` selected features according to their correlation with components one and two of their data block. Features positioned closer to the outer dashed circle play a larger role in predicting the outcome. The predictive multiblock signature can be read off by considering the position of each feature relative to the others (see panel A of @fig-circle-plots for a primer). The most prominent part of the signature is arrayed along the horizontal. In particular, Enterococcus is highly negatively correlated with component one, and Methylobacterium shows a more modest, positive correlation to component one. Each of these microbiome features have mirror-image relationships to the clusters of metabolite features on the left and right of the figure: Enterococcus is positively correlated to the metabolite features on the left and negatively correlated to the metabolite features on the right, while Methylobacterium is positively correlated to the metabolite features on the right and negatively correlated to the features on the left. The second part of the signature is arrayed along the vertical: tryptamine and a group of ceramides are negatively correlated with the microbiome features towards the bottom of the figure, and positively correlated with the microbiome features towards the top.
+
+```{r circle_plots}
+#| label: fig-circle-plots
+#| fig-cap: !expr paste0("Circle plots represent features selected into the model, as well as relationships among features. (A) An example circle plot. Gray dots are model features plotted in 2D space, indicating their correlation with model components one (x-axis), and two (y-axis). The dashed circles are guides representing correlations of ±0.5 (inner circle) and ±1 (outer circle). Features closer to the outer circle are more important for predicting the outcome. The angle made by connecting two features through the origin gives the sign of their correlation. Acute angles indicate positive correlations (red and green), obtuse angles represent negative correlations (purple), and right angles indicate no correlation (blue). Moreover, the length of the connecting lines gives the magnitude of the correlation. For example, the angle made by the red and green lines is identical, but the red lines are longer, indicating a stronger positive correlation between the red features relative to the green features. (B) A circle plot with all ", sum(selected_n_dcv$Multiblock), " features selected into the model. This indicates a two-part multi-omic signature. In the first part, Enterococcus and Methylobacterium are negatively associated with one another, and have mirror-image relationships to the metabolite clusters on the left and right of the figure. In the second part, tryptamine and a ceramide group are negatively/positively correlated with the microbiome features towards the bottom/top of the graph. Only the features with the largest correlations to components one and two in each block are labeled.")
+#| fig-width: 14
+#| fig-height: 6.3
+
+# This is using lsa::cosine() to make sure the black and blue angles are the
+# same.
+# library(lsa)
+# # 0.9756 cosine(c(.9, .1), c(.9, -.1))
+# # 0.9761 cosine(c(-.055, -.5), c(.055, -.5))
+
+# First circle plot is for explanation
+theme_set(theme_classic(base_size = 14))
+circle_explain <- tibble(x = c(.9, .9, -.9, 0, -.055, .055, .65, -.65),
+       y = c(.1, -.1, 0, .9, -.5, -.5, .65, -.65),
+       angle = c("A", "A", "B", "B", "C", "C", "D", "D")) %>%
+    ggplot(aes(x = x, y = y, color = angle)) +
+    geom_circle(aes(x0 = 0, y0 = 0, r = 1), linetype = "dashed",
+                         color = "gray80") +
+    geom_circle(aes(x0 = 0, y0 = 0, r = 0.5), linetype = "dashed",
+                color = "gray80") +
+    geom_point(color = "black", size = 4, alpha = .25) +
+    geom_segment(aes(x = 0, y = 0, xend = x, yend = y),
+                 arrow = arrow(
+                     angle = 20,
+                     length = unit(.3, "cm"), type = "closed")) +
+    scale_color_brewer(palette = "Set1") +
+    theme(legend.position = "none",
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()) +
+    labs(x = "Correlation with Component 1",
+         y = "Correlation with Component 2")
+
+# For each block & component, get top 4 features correlated with component
+lab1_micro <- diablo_circle_data %>%
+    filter(Block == "micro") %>%
+    arrange(desc(abs(x))) %>%
+    filter(row_number() %in% 1:4)
+lab2_micro <- diablo_circle_data %>%
+    filter(Block == "micro") %>%
+    arrange(desc(abs(y))) %>%
+    filter(row_number() %in% 1:4)
+lab1_meta <- diablo_circle_data %>%
+    filter(Block == "meta") %>%
+    arrange(desc(abs(x))) %>%
+    filter(row_number() %in% 1:4)
+lab2_meta <- diablo_circle_data %>%
+    filter(Block == "meta") %>%
+    arrange(desc(abs(y))) %>%
+    filter(row_number() %in% 1:4)
+lab1_clin <- diablo_circle_data %>%
+    filter(Block == "clin") %>%
+    arrange(desc(abs(x))) %>%
+    filter(row_number() %in% 1:4)
+lab2_clin <- diablo_circle_data %>%
+    filter(Block == "clin") %>%
+    arrange(desc(abs(y))) %>%
+    filter(row_number() %in% 1:4)
+
+# Vector of features to label
+label_features <- bind_rows(
+    lab1_micro, lab2_micro, lab1_meta, lab2_meta, lab1_clin, lab2_clin) %>%
+    mutate(label_flag = 1L) %>%
+    select(predictor, label_flag)
+
+# Second circle plot has real data
+circle_data <- diablo_circle_data %>%
+    left_join(label_features, by = "predictor") %>%
+    mutate(predictor = str_remove(predictor, "^(m_|c_|otu[0-9]+_)"),
+           predictor = if_else(label_flag == 1, predictor, NA_character_)) %>%
+    separate_wider_delim(
+        predictor, delim = "_", names = c("prefix", "stem"),
+        cols_remove = FALSE, too_few = "align_start") %>%
+    mutate(predictor = case_when(
+        Block == "micro" & prefix == "g" ~ stem,
+        Block == "micro" & !is.na(prefix) ~ paste0(stem, " (", prefix, ")"),
+        TRUE ~ predictor)) %>%
+    ggplot(aes(x = x, y = y, label = predictor, color = Block)) +
+    geom_circle(aes(x0 = 0, y0 = 0, r = 1), linetype = "dashed",
+                         color = "gray80") +
+    geom_circle(aes(x0 = 0, y0 = 0, r = 0.5), linetype = "dashed",
+                color = "gray80") +
+    geom_point(size = 3, alpha = 0.4) +
+    geom_text_repel(size = 4.5,
+                    color = "black"
+                    ,force = 25
+                    ,min.segment.length = 0
+                    ,max.overlaps = 10
+                    ,seed = 3) +
+    scale_x_continuous(limits = c(-1, 1)) +
+    scale_y_continuous(limits = c(-1, 1)) +
+    scale_color_colorblind(breaks = c("meta", "micro", "clin"),
+                           labels = c("Metabolome", "Microbiome", "Clinical")) +
+    theme(axis.title.y = element_blank(),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()) +
+    labs(x = "Correlation with Component 1",
+         y = "Correlation with Component 2")
+
+# Panel figure
+ggarrange(circle_explain, circle_data, labels = c("A", "B"),
+                          nrow = 1, widths = c(3, 3.63))
+
+```
+
+@fig-network38 offers an alternative representation of the multi-omic signature. Rather than showing all features selected into the model (as in Panel B of @fig-circle-plots) @fig-network38 only displays features that have correlations with at least one other feature above/below ±0.38. The two parts of the signature are now represented as separate clusters---the larger containing Enterococcus and Methylobacterium, and the smaller centering around tryptamine and the ceramides. Note that even though Methylobacterium is portrayed as having only a small number of connections to the nearby metabolome features, it actually connects to every feature that Enterococcus does. These associations are not shown in @fig-network38 however, because they do not meet the ±0.38 cutoff.
+
+```{r network_38}
+#| label: fig-network38
+#| fig-cap: "A network graph representing the two-part mult-omic signature discovered by the model. The first part consists of Enterococcus and Methylobacterium and their pattern of correlations to the metabolite cloud in the lower left of the graph. The second part centers around tryptamine and the ceramides and their associations with the features in the upper right of the graph. Only model features with at least one correlation to another feature above/below ±0.38 are shown. Colors indicate the data block each feature is from. Features with higher expression in healers are plotted as circles; those with higher expression in non-healers are plotted as triangles."
+#| fig-width: 13
+#| fig-height: 7
+
+# Filter to edges above cutoff
+cut <- network_table %>%
+    filter(abs_weight > 0.38)
+
+# Get nodes
+nodes <- tibble(label = sort(unique(c(cut$from_name, cut$to_name)))) %>%
+    inner_join(
+        predictor_summary_dcv %>%
+            mutate(high_expr = if_else(diff > 0, "Responder",
+                                       "Non-responder")) %>%
+            select(predictor, high_expr),
+        by = join_by(label == predictor)) %>%
+    mutate(
+        id = row_number(),
+        block = case_when(
+            str_detect(label, "^c_") ~ "Clinical",
+            str_detect(label, "^m_") ~ "Metabolite",
+            str_detect(label, "^otu") ~ "OTU",
+            TRUE ~ "error")) %>%
+    select(id, label, block, high_expr)
+
+# Table of associated edges
+edges <- cut %>%
+    inner_join(nodes %>%
+                   select(from = id, label),
+               by = join_by(from_name == label)) %>%
+    inner_join(nodes %>%
+                   select(to = id, label),
+               by = join_by(to_name == label)) %>%
+    select(from, to, weight)
+
+# Revise node labels
+nodes2 <- nodes %>%
+    mutate(label2 = if_else(label %in% to_label, label, NA_character_),
+           label2 = str_remove(label2, "^otu[0-9]+_|^c_|^m_")) %>%
+            separate_wider_delim(
+                label2, delim = "_", names = c("level", "pred"),
+                cols_remove = FALSE, too_few = "align_start") %>%
+    mutate(label2 = if_else(
+        block == "OTU" & !is.na(pred), pred, label2))
+
+# Tidygraph object
+tidygraph_nicely <- tbl_graph(nodes = nodes2,
+                              edges = edges,
+                              directed = TRUE)
+
+# Graph
+set.seed(2)
+tidygraph_nicely %>%
+    ggraph("igraph", algorithm = "nicely") +
+    geom_edge_link(color = "gray80", edge_width = .05) +
+    geom_node_point(aes(color = block, shape = high_expr), size = 2.5) +
+    geom_node_text(aes(label = label2)
+                   ,size = 3.5
+                   ,segment.color = "black"
+                   ,segment.size = 0.2
+                   ,repel = TRUE
+                   ,min.segment.length = 0
+                   ,force = 35
+                   ,max.overlaps = 20
+                   ,seed = 1) +
+    scale_shape_manual(
+                breaks = c("Responder", "Non-responder"),
+                labels = c("Healing", "Non-healing"),
+                values = c("circle", "triangle")) +
+    scale_color_colorblind(breaks = c("Metabolite", "OTU", "Clinical"),
+                       labels = c("Metabolome", "Microbiome", "Clinical")) +
+    theme_graph(base_size = 14, base_family = "sans") +
+    theme(legend.position = "inside",
+          legend.position.inside = c(0.8, 0.3)) +
+    guides(color = guide_legend(title = "Block", order = 1),
+           shape = guide_legend(title = "Higher Expression", order = 2))
+
+```
+
+### Enterococcus & Methylobacterium
+
+@fig-ent-meth provides a fuller view of the way in which Enterococcus and Methylobacterium combine with other model features to predict healing. Panel A is a heat map of correlations between 20 metabolite and clinical features (y-axis) and Enterococcus and Methylobacterium (x-axis). Features with higher expression in healers are printed in bold. Y-axis features were chosen for having the ten most positive or ten most negative correlations with Enterococcus. Panel B positions all metabolite and clinical features in 2D space representing their correlations with Enterococcus (x-axis) and Methylobacterium (y-axis). This strikingly demonstrates the mirror-image relationship that the two OTUs have with other model features.
+
+```{r ent_meth}
+#| label: fig-ent-meth
+#| fig-cap: (A) Model features with the ten most positive and ten most negative correlations to Enterococcus. The signs on these correlations are flipped with respect to Methylobacterium. Feature names written in bold have higher expression in healers. (B) The relationship between correlations with Enterococcus and correlations with Methylobacterium is highly regular. Each circle represents a selected metabolite or clinical feature. The black line is a linear model relating the correlations that these features have with Enterococcus to the correlations that they have with Methylobacterium. Methylobacterium correlations are roughly the Enterococcus correlations multiplied by -0.5. All features shown on the y-axis in panel A are labeled in panel B.
+#| fig-width: 10
+#| fig-height: 5.5
+
+ent_meth_net <- network_table %>%
+    filter(str_detect(from_name, "otu4_|otu12_") |
+               str_detect(to_name, "otu4_|otu12_")) %>%
+    
+    # Put all enterococcus & methylobacterium in x
+    mutate(x = if_else(str_detect(to_name, "otu4_|otu12_"),
+                                   to_name, from_name),
+           
+           # Put all non-target in y
+           y = if_else(!str_detect(to_name, "otu4_|otu12_"),
+                                   to_name, from_name)) %>%
+    select(x, y, weight) %>%
+    left_join(predictor_summary_dcv %>%
+                  select(x = predictor, x_diff = diff), by = "x") %>%
+    left_join(predictor_summary_dcv %>%
+                  select(y = predictor, y_diff = diff), by = "y") %>%
+    select(x, y, x_diff, y_diff , weight)
+
+# Only keep rows (to names) with 10 highest & 10 lowest correlations to enterococcus
+top_neg <- ent_meth_net %>%
+    filter(x == "otu4_g_Enterococcus") %>%
+    arrange(weight) %>%
+    filter(row_number() %in% 1:10) %>%
+    pull(y)
+top_pos <- ent_meth_net %>%
+    filter(x == "otu4_g_Enterococcus") %>%
+    arrange(desc(weight)) %>%
+    filter(row_number() %in% 1:10) %>%
+    pull(y)
+
+# Sort to-name features by weight
+ent_sort <- ent_meth_net %>%
+    filter(x == "otu4_g_Enterococcus") %>%
+    select(y, sort_weight = weight)
+
+# Filter to top positive & negative correlations, sort y on enterococcus weights
+ent_meth_net2 <- ent_meth_net %>%
+    filter(y %in% c(top_neg, top_pos)) %>%
+    left_join(ent_sort, by = "y") %>%
+    mutate(sort_weight = if_else(is.na(sort_weight), 0, sort_weight),
+           across(x:y,
+                  ~ str_remove(.x, "^(otu[0-9]+_|m_|c_)")),
+           y_name = if_else(y_diff >= 0, glue("<b>{y}</b>"), glue("{y}")),
+           y_name = fct_reorder(y_name, sort_weight))
+
+# Heatmap
+ent_meth_heatmap <- ent_meth_net2 %>%
+    ggplot(aes(x = x, y = y_name, fill = weight)) +
+    geom_tile(color = "white") +
+    scale_fill_viridis(na.value = "gray90") +
+    scale_x_discrete(labels = c("Enterococcus", "Methylobacterium")) +
+    theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          panel.grid.major = element_blank(),
+          axis.text.x = element_text(hjust = 1, angle = 30,
+                                     face = c("plain", "bold")),
+          axis.text.y = element_markdown()) +
+    labs(fill = "Correlation")
+
+# Scatterplot of other features' correlations with enterococcus &
+# methylobacterium.
+ent_meth_scatter <- ent_meth_net %>%
+    select(x, y, weight) %>%
+    pivot_wider(names_from = x, values_from = weight) %>%
+    select(Enterococcus = otu4_g_Enterococcus,
+           Methylobacterium = otu12_g_Methylobacterium, label = y) %>%
+    mutate(label = if_else(
+               label %in% c(top_pos, top_neg), label,
+               NA_character_),
+           label = str_remove(label, "^m_|c_"),
+           nudge_y = if_else(Methylobacterium < 0, 0.01, -0.01)) %>%
+    ggplot(aes(x = Enterococcus, y = Methylobacterium,
+               label = label)) +
+    geom_point(color = "firebrick", size = 3, alpha = 0.1) +
+    geom_smooth(method = "lm", linewidth = 0.5, color = "black") +
+    geom_text_repel(size = 3,
+                    segment.size = 0.1,
+                    color = "black",
+                    nudge_x = 0.02,
+                    nudge_y = 0.08,
+                    force = 40,
+                    min.segment.length = 0,
+                    max.overlaps = 20,
+                    seed = 2) +
+    scale_y_continuous(breaks = c(-0.4, -0.2, 0, 0.2, 0.4)) +
+    theme(panel.grid.major = element_line(color = "gray80", linewidth = 0.1)) +
+    labs(x = "Correlation with Enterococcus",
+         y = "Correlation with Methylobacterium")
+
+# Panel figure
+ggarrange(
+    ent_meth_heatmap,
+    ent_meth_scatter,
+    labels = c("A", "B"),
+    nrow = 1,
+    widths = c(4, 4))
+
+```
+
+### Tryptamine & the ceramides
+
+The upper-right feature cluster in @fig-network38 illustrates the portion of the multi-omic signature centered around tryptamine and the ceramides. @fig-tryptamine-ceramides offers more detail by giving the relationships among features. In particular, it indicates that tryptamine and the ceramide group show very similar patterns of correlation with respect to other model features.
+
+```{r tryptamine_ceramides}
+#| label: fig-tryptamine-ceramides
+#| fig-cap: Heat map representing correlations between tryptamine, ceramides, and other model features. Features are included on the y-axis if they have at least one correlation with an x-axis feature above/below ±0.38. Feature names printed in bold have higher expression in healers. Parenthetical information after microbiome features indicates the taxonomic level at which its identity was resolved---e.g., (f)amily, (o)rder. Microbiome features with no parenthetical information were resolved at the genus level.
+#| fig-width: 3.5
+#| fig-height: 5
+
+# List of features for the x-axis of heatmap
+x_features <- c("m_Cer(d18:2(4E,14Z)/16:0)", "m_Cer(d17:1/16:0)", "m_Ceramide (d18:1/18:0)", "m_Ceramide (d18:1/20:0)", "m_ceramide (d18:1/17:0, d17:1/18:0)",
+               "m_Cer(t18:0/16:0)", "m_Tryptamine")
+
+# Highest cutoff where methylobacterium still shows up is 0.20
+tryp_cer_net <- network_table %>%
+    filter(from_name %in% x_features,
+           abs(weight) > 0.38)
+
+# Heatmap showing correlations between ceramides and other features with 
+tryp_cer_net2 <- tryp_cer_net %>%
+    select(x = from_name, y = to_name, weight) %>%
+    pivot_wider(names_from = "x", values_from = "weight") %>%
+    pivot_longer(cols = matches("m_"), names_to = "x",
+                 values_to = "weight") %>%
+    left_join(predictor_summary_dcv %>%
+                  select(x = predictor, x_diff = diff), by = "x") %>%
+    left_join(predictor_summary_dcv %>%
+                  select(y = predictor, y_diff = diff), by = "y")
+
+# Add in weight for rows where it's NA--i.e. doesn't meet cutoff.
+tryp_cer_net3 <- tryp_cer_net2 %>%
+    inner_join(network_table %>%
+                   select(x = from_name, y = to_name, weight2 = weight),
+               by = c("x", "y")) %>%
+    mutate(weight = if_else(is.na(weight), weight2, weight)) %>%
+    select(x, y, weight, x_diff, y_diff)
+
+# Y-axis labels will be sorted by weights for Tryptamine
+tryp_cer_sort <- tryp_cer_net3 %>%
+    filter(x == "m_Tryptamine") %>%
+    select(y, sort_weight = weight)
+
+# Graph
+theme_set(theme_classic(base_size = 8))
+tryp_cer_net3 %>%
+    left_join(tryp_cer_sort, by = "y") %>%
+    mutate(sort_weight = if_else(is.na(sort_weight), 0, sort_weight),
+           across(y:x, ~ str_remove(.x, "^(otu[0-9]+_|m_|c_)")),
+           x = if_else(x == "ceramide (d18:1/17:0, d17:1/18:0)",
+                       "Ceramide (d18:1/17:0, d17:1/18:0)", x),
+           y_prefix = str_extract(y, "^[a-z]_"),
+           y_prefix = str_remove(y_prefix, "_$"),
+           y_stem = str_extract(y, "_.+$"),
+           y_stem = str_remove(y_stem, "^_"),
+           y = case_when(
+               y_prefix == "g" ~ y_stem,
+               !is.na(y_prefix) ~ paste0(y_stem, " (", y_prefix, ")"),
+               TRUE ~ y),
+           x = fct_relevel(x, "Tryptamine", "Cer(d18:2(4E,14Z)/16:0)",
+                           "Cer(d17:1/16:0)",
+                           "Ceramide (d18:1/18:0)",
+                           "Ceramide (d18:1/20:0)",
+                           "Ceramide (d18:1/17:0, d17:1/18:0)"),
+           y_name = if_else(y_diff >= 0, glue("<b>{y}</b>"), glue("{y}")),
+           y_name = fct_reorder(y_name, sort_weight)) %>%
+    ggplot(aes(x = x, y = y_name, fill = weight)) +
+    geom_tile(color = "white") +
+    scale_fill_viridis(na.value = "gray90") +
+    theme(
+        axis.text.x = element_text(face = "bold", hjust = 1, angle = 30),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.y = element_markdown(),
+        panel.grid.major = element_blank()) +
+    labs(fill = "Correlation")
+
+```
+
+## Conclusions
+
+This work addressed two main objectives. The first was to determine whether samples from healing versus non-healing wounds could be discriminated using integrative -omics methods. The results demonstrate that a multiblock sPLS-DA model can learn to accurately classify the two sample types. Further, the model identified a multi-omic signature defined on component one by the opposition between Enterococcus and Methylobacterium and their associated metabolites, and on component two by the relationship between a ceramide/tryptamine group and a group of metabolite and clinical features.
+
+The second objective was to investigate whether the analysis might benefit from a multilevel approach. Multilevel and non-multilevel PCAs were performed on the metabolome and microbiome data blocks separately. The results for both blocks indicated that multilevel decomposition did not reduce clustering by patients or improve clustering by outcome.
+
+Objectives for further work include (1) following up on the multilevel analysis by looking to see how adding a multilevel decomposition to the sPLS-DA model affects results, and (2) experimenting in the sPLS-DA model with increasing amounts of regularization to determine whether similar multi-omic signatures can be detected using fewer features.
+
+## References
+
+::: {#refs}
+:::
