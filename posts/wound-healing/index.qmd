@@ -21,6 +21,7 @@ categories:
   - wound healing
   - -omics integration
   - diabetes
+  - matrix factorization
 image: figures/network38.svg
 ---
 
