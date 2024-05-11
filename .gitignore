@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+_freeze
+_site
+.quarto
+renv
+.DS_Store

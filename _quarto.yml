@@ -1,0 +1,31 @@
+project:
+    type: website
+
+website:
+    search: 
+        location: navbar
+        type: overlay
+    page-footer:
+        center: "© 2024, Jeremy Boyd"
+    navbar:
+        title: false
+        logo: "logo.png"
+        collapse: true
+        left:
+            - href: index.qmd
+              text: About
+            - posts.qmd
+        tools:
+        
+format:
+    html:
+        smooth-scroll: true
+        toc: true
+        theme:
+            light: flatly
+            dark: darkly
+        mainfont: "Georgia, serif;"
+        css: styles.css
+        
+
+editor: visual

@@ -1,0 +1,375 @@
+---
+title: Do wealthier drivers cut more at all-way stop intersections?
+subtitle: An observational study of 759 drivers navigating 46 intersections across Southern California
+authors: Jeremy Boyd, Ph.D.
+date: "2021-10-25"
+date-modified: "`r format(Sys.Date(), '%B %d, %Y')`"
+categories:
+  - unethical behavior
+  - social class
+  - driving
+  - attention
+  - Bayesian models
+  - hierarchical models
+---
+
+![](images/featured.jpg)
+
+```{r setup, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, eval = TRUE}
+
+# Todo: Can hollywood image be put in header?
+# Is yaml correct for quarto blog? https://quarto.org/docs/reference/formats/html.html
+# Change footnotes to APA-style references using built-in quarto references.
+# Add selenium blog post
+
+
+
+# image:
+#     placement: 3
+#     caption: ''
+#     focal_point: 'Center'
+#     preview_only: no
+
+
+
+# NOTES:
+# "Last modified" gets automatically updated in git. No need to do anything in
+# YAML.
+
+# The character string made up from YAML categories doesn't wrap. This causes
+# posts with long category strings to spill out of the container on small screen
+# sizes (e.g., mobile). A not-so-great workaround would be to limit the number
+# of categories in order to keep the categories string short enough that
+# wrapping isn't needed. This is a bug in the Hugo theme: it takes care of
+# wrapping other stuff, but forgets about the categories string.
+
+# If I make any font changes in ggplot figures then this file has to be re-knit
+# before they show up on the published site.
+
+# Replace current code for summarizing posterior draws with new code using
+# tidybayes.
+
+library(tidyverse)
+library(tidybayes)
+library(brms)
+library(feather)
+
+# Directory storing analysis files
+analysis_dir <- "/Users/jboyd/Documents/studies/cutting/cutting_bayesian/"
+
+# Post directory
+post_dir <- "/Users/jboyd/Documents/websites/personal_website/content/post/2021-10-25-cutting-and-wealth/"
+
+# Read in data and model
+df <- read_feather(paste0(analysis_dir, "cutting_data_organized.feather"))
+fit <- readRDS(file = paste0(analysis_dir, "fit_cut.RDS"))
+fit_light <- readRDS(paste0(analysis_dir, "fit_light.RDS"))
+fit_heavy <- readRDS(paste0(analysis_dir, "fit_heavy.RDS"))
+```
+
+Does an individual's socioeconomic status (SES) predict their tendency toward unethical behavior? If so, who is more likely to behave unethically---the rich or the poor? Pop culture abounds with depictions of each. For example, Walter Hill's cult classic *The Warriors* (1979; see @fig-warriors) features numerous violent confrontations between New York City street gangs. This depiction is consistent with the idea that low SES individuals live in environments in which resources are relatively scarce, and so must lie, cheat, steal---and in some cases even kill---to survive.
+
+![The eponymous street gang from *The Warriors* (1979).](images/warriors.webp){#fig-warriors width="700"}
+
+Alternatively, consider Gordon Gekko from Oliver Stone's *Wall Street* (1987; see @fig-gekko). Gekko commits insider trading in order to take over a company, fire its employees, and then raid their pension plan for his own benefit. Gekko's "greed is good" philosophy is consistent with numerous examples of real-world unethical behavior among high SES individuals: bankers dupe their clients into participating in investment schemes they know are doomed to fail,[^1]^,^[^2] CEOs embezzle millions to fund lavish lifestyles[^3], and companies attempt to increase their profitability by illegally harming the health and well-being of thousands.[^4]
+
+[^1]: Corkery, M., & Protess, B. (2014, August 21). Bank of America papers show conflict and trickery in mortgages. *The New York Times*. Retrieved from http://www.nytimes.com.
+
+[^2]: Johnson, K. (2014, July 14). Citi to pay \$7 billion in Justice settlement. *USA Today*. Retrieved from http://www.usatoday.com.
+
+[^3]: Sorkin, A.R. (2005, September 20). Ex-Tyco executives get 8 to 25 years in prison. *The New York Times*. Retrieved from http://www.nytimes.com.
+
+[^4]: Waas, M. (2010, April 23). WellPoint routinely targets breast cancer patients. *Reuters*. Retrieved from http://www.reuters.com.
+
+![Gordon Gekko from *Wall Street* (1987).](images/gekko.jpg){#fig-gekko width="700"}
+
+## Are wealthier individuals more prone to unethical behavior?
+
+While empirical evidence bearing on the relationship between SES and unethical behavior is sparse, recent results from Piff and colleagues[^5] demonstrate a positive association between the two. Across seven studies, the authors found that high SES consistently predicted increased unethical behavior. The very uniformity of the effect however, has suggested to some that the results shouldn't be believed. For example, Francis[^6] found that most of the Piff et al. studies had only about a 50% chance of finding a statistically significant effect. Given this power, the likelihood of getting significant results across all seven studies is quite low---around 2%. To account for this discrepancy, Francis argues that Piff et al. "may have (perhaps unwittingly) run, but not reported, additional experiments that failed to reject the null hypothesis (the file drawer problem), or they may have run the experiments in a way that improperly increased the rejection rate of the null hypothesis."
+
+[^5]: Piff, P.K., Stancato, D.M., Côté, S., Mendoza-Denton, R., & Keltner, D. (2012). Higher social class predicts increased unethical behavior. *Proceedings of the National Academy of Sciences*, 109(11), 4086-4091.
+
+[^6]: Francis, G. (2012). Evidence that publication bias contaminated studies relating social class and unethical behavior. *Proceedings of the National Academy of Sciences*, 109(25), E1587.
+
+## Replicating and extending Piff et al.'s Study 1
+
+The best way to address Francis’ critique is via independent replication. The present work initiates this effort by attempting to replicate and extend Piff et al.'s Study 1. We focus on this particular study because it offers a compelling real-world demonstration of the relationship between SES and unethical behavior, and also because there are plausible explanations for the behavior of high SES participants that are largely unexplored in Piff et al., but that we attempt to address here.
+
+In Study 1 Piff and colleagues observed 274 drivers as they navigated a single all-way stop intersection in the San Francisco Bay Area. Driver SES was indexed by estimating the value of drivers’ vehicles. Piff et al. found that those driving more expensive vehicles were more likely to illegally cut at the intersection---that is, they were less likely to wait their turn in the queue that formed as cars pulled up to the intersection, as required by California Vehicle Code.[^7] Why are high SES drivers more likely to cut? While Piff et al. acknowledge that the relationship between SES and unethical behavior is complex, their central argument across all seven studies is that wealthier individuals entertain more positive attitudes towards greed. This contributes to behaviors like lying during business negotiations (Study 5), and cheating at for-profit games (Study 6). But while greed offers a relatively straightforward account of unethical behaviors that result in material gain, it seems ill-suited to explain cutting at all-way stop intersections, where drivers seem to be accruing nothing more than mere seconds. The present work explores an alternative account of the relationship between SES and illegal cutting behavior.
+
+[^7]: State of California. (2021). *California Vehicle Code*. Retrieved from https://leginfo.legislature.ca.gov.
+
+## Could high SES cutting be accidental?
+
+One interpretation of Piff and colleagues’ Study 1 is that increased cutting among high SES drivers reflects their ethics. Wealth is associated with increases in self-interested behavior[^8] and reduced compassion.[^9] These traits may lead high SES drivers to prioritize their own desire to quickly navigate intersections over both fairness to other drivers, and the law.
+
+[^8]: Piff, P.K. (2014). Wealth and the inflated self: Class, entitlement, and narcissism. *Personality and Social Psychology Bulletin*, 40(1), 34-43.
+
+[^9]: Stellar, J.E., Manzo, V.M., Kraus, M.W., & Keltner, D. (2012). Class and compassion: Socioeconomic factors predict responses to suffering. *Emotion*, 12(3), 449.
+
+Alternatively, it may be that cutting has very little to do with ethics. Instead, high SES drivers may be more prone to accidental cutting due to SES-related differences in attention, as outlined in the following section. Differentiating cutting that is accidental from cutting based on ethics is important because it bears on a driver’s culpability: many ethical and legal systems assign reduced culpability in the case of accidental law-breaking---e.g., the difference between murder and manslaughter.[^10]
+
+[^10]: Numbers 35:16-29. (2001). *English Standard Version Bible*. Retrieved from https://esv.org.
+
+How might higher SES drivers accidentally cut? Navigating all-way stop intersections requires attention to other drivers in order to determine whose turn it is to proceed. Momentary lapses of attention can cause drivers to lose track of their place in the queue, which leads to accidental cutting if they happen to go through the intersection at the wrong time. Here we suggest that high SES drivers might be more likely to cut accidentally because they devote less attention to other drivers.
+
+## SES-related differences in attention
+
+The idea that higher SES individuals attend less to others has been explored in a number of studies. Whereas lower class individuals show increased attention to the social environment and specifically to other people as a way of dealing with challenges, higher class individuals are less dependent on others for survival, which leaves them relatively free to focus on and pursue their own self-interest.[^11] These class-based differences manifest themselves in numerous subtle ways. For example, high SES individuals show increased fidgeting and decreased gaze towards their partners during conversation,[^12] as well as decreased ability to read others’ emotions,[^13] both of which are consistent with less attention to others. Indeed, the structure of many social hierarchies encourages decreased attention to others on the part of high SES individuals. In work settings for instance, there is an asymmetry of attention such that it is more likely to be directed up the hierarchy: subordinates pay more attention to their supervisors because success at work is heavily contingent on pleasing their supervisors. In contrast, supervisors pay less attention to subordinates because their success is less strongly dependent on having detailed knowledge of their subordinates’ lives and work.[^14] It is thus possible for high SES individuals---who tend to be positioned higher in social hierarchies---to learn to attend less to others as a function of their status.
+
+[^11]: Kraus, M.W., Piff, P.K., Mendoza-Denton, R., Rheinschmidt, M.L., & Keltner, D. (2012). Social class, solipsism, and contextualism: How the rich are different from the poor. *Psychological Review*, 119(3), 546-572.
+
+[^12]: Kraus, M.W., & Keltner, D. (2009). Signs of socioeconomic status: A thin-slicing approach. *Psychological Science*, 20(1), 99-106.
+
+[^13]: Kraus, M.W., Côté, S., & Keltner, D. (2010). Social class, contextualism, and empathic accuracy. *Psychological Science*, 21(11), 1716-1723.
+
+[^14]: Fiske, S.T. (1993). Controlling other people: The impact of power on stereotyping. *American Psychologist*, 48(6), 621-628.
+
+## Revisitng Piff et al.'s Study 1
+
+The asymmetry in attention to others among high versus low SES individuals might affect cutting behavior in a way that leads to accidental high SES cutting. This provides an alternative account of the results from Piff et al.'s Study 1, as illustrated in @fig-predictions.
+
+```{r preds, echo = FALSE}
+
+# NOTE: If you want the automatic figure numbering to render correctly you can't
+# use underscores in the name of the code block--e.g., the name has to be
+# "preds" and not "pred_figs". Must be doing some parsing of the code block and
+# can't handle underscores.
+
+# Data and figure illustrating positive effects of vehicle status and traffic
+# with and without an interaction. Generate lines for the different conditions
+# (driver SES x traffic x panel) that have different intercepts and slopes.
+l <- list(
+    `Driver SES` = rep(0:4, times = 6),
+    panel = rep(c("Attention", "Ethics"), each = 15),
+    Traffic = rep(c("Heavy", "Light", "Piff et al."), each = 5, times = 2),
+    intercept = rep(c(17.5, 14.5, 16, 20, 12, 16), each = 5),
+    slope = rep(c(3, 0, 1.5, 1.5, 1.5, 1.5), each = 5)
+)
+
+# Compute means based on condition intercepts & slopes
+pred_data <- pmap_dfr(
+    l,
+    .f = function(`Driver SES`, panel, Traffic, intercept, slope) {
+        tibble(
+            `Driver SES` = `Driver SES`,
+            panel = panel,
+            Traffic = Traffic,
+            intercept = intercept,
+            slope = slope,
+            y = intercept + slope * `Driver SES`
+        )
+    }) %>%
+    mutate(Traffic = fct_relevel(Traffic, c("Heavy", "Light")),
+           panel = fct_relevel(panel, "Ethics"))
+```
+
+```{r check, echo = FALSE, eval = FALSE}
+
+# Check means in order to get main effects in the Attention & Ethics condition
+# in the same range.
+pred_data %>%
+    group_by(panel) %>%
+    summarize(mean = mean(y), .groups = "drop")
+pred_data %>%
+    group_by(Traffic, panel) %>%
+    summarize(mean = mean(y), .groups = "drop")
+pred_data %>%
+    group_by(`Driver SES`, panel) %>%
+    summarize(mean = mean(y), .groups = "drop")
+```
+
+```{r display, echo = FALSE}
+#| label: fig-predictions
+#| fig-cap: "Predictions from an attentional account of the relationship between driver SES and cutting behavior at all-way stop intersections. *P(Cut)* is the probability of cutting."
+
+# Custom colors & linetypes
+traffic_levels <- c("Heavy Traffic", "Piff et al.", "Light Traffic")
+my_colors <- c("#e41a1c", "#a1a1a1", "#377eb8") 
+names(my_colors) <- traffic_levels
+my_linetypes <- c("solid", "dashed", "solid")
+names(my_linetypes) <- traffic_levels
+
+# Only plot attention panel
+pred_data %>%
+    filter(panel == "Attention") %>%
+    mutate(Traffic = case_when(Traffic == "Heavy" ~ "Heavy Traffic",
+                               Traffic == "Light" ~ "Light Traffic",
+                               Traffic == "Piff et al." ~ "Piff et al."),
+           Traffic = fct_relevel(Traffic, "Heavy Traffic", "Piff et al.",
+                                 "Light Traffic")) %>%
+    ggplot(mapping = aes(x = `Driver SES`, y = y, group = Traffic,
+                         color = Traffic, linetype = Traffic)) +
+    geom_line() +
+    scale_x_continuous(breaks = 0:4, labels = 1:5) +
+    scale_y_continuous(name = "P(Cut)",
+                       limits = c(0, 100),
+                       breaks = seq(0, 100, 25)) +
+    scale_color_manual(values = my_colors) +
+    scale_linetype_manual(values = my_linetypes) + 
+    theme(axis.text.y = element_blank(),
+          legend.title = element_blank())
+```
+
+I assume that that cutting is more common under heavy traffic conditions. When additional vehicles appear in more of the lanes entering an intersection, it becomes increasingly difficult to keep track of one's place in the queue. Losing track of one's place leads to accidental cutting. This assumption, combined with worse attention to others among higher SES drivers, predicts the interaction pattern shown in @fig-predictions, in which the effect of driver SES is more pronounced under heavy traffic conditions.
+
+The dashed gray line in @fig-predictions represents the results from Piff et al.'s Study 1. Since Piff et al. did not keep track of traffic, it's possible that their results were generated by combining data from heavy and light traffic conditions, as represented by @fig-predictions's red and blue lines, respectively. If this is what really occurred, it undermines the conclusion that the behavior of higher SES drivers is due to ethically non-normative behavior. Instead, accidental cutting becomes a possibility. Note that the blue line in @fig-predictions is flat---low and high SES drivers cut at the same rate when traffic is light and attentional demands are low. In contrast, when traffic is heavy there are more attentional demands, which results in more cutting among higher SES drivers. Crucially, this pattern of cutting would be consistent with a purely attentional account: higher SES drivers cut more not because they place their own interests above those of other drivers, but because they devote less attention to other drivers are are therefore more likely to lose their place in the queue and cut accidentally.
+
+Finding out what drivers do under light traffic conditions is key for discriminating between the attentional and ethics-based hypotheses. If the effect of SES on cutting is largely limited to heavy traffic conditions, this would bolster the attentional account. However, if there is an effect of SES on cutting in light traffic---where attentional demands are low---this would be consistent with the idea that higher SES drivers cut more than lower SES drivers because they don't really care about the rules, or disadvantaging other drivers.
+
+## The present study
+
+The present work addresses a serious critique of Piff and colleagues leveled by Francis. It does so by attempting to replicate Piff et al.’s finding of a positive correlation between SES and illegal cutting behavior at all-way stop intersections. In addition, while it is relatively common to assume that unethical behavior among wealthier individuals is related to ethical shortcomings, here we investigate the possibility that high SES cutting might instead be accidental in that it reflects class-based differences in attention.
+
+### Methods
+
+#### Coders
+
+<!-- I had to set math: false in params.yaml in order to get dollar signs to render correctly here. This will probably be a problem if I want to use math anywhere else in the site.-->
+
+Thirty-five undergraduate students at the University of California, San Diego were trained to code vehicle values using the same five-point scale found in Piff et al.: 1 = cars worth \$3,000 or less; 2 = \$3,001-\$10,000; 3 = \$10,001-\$25,000; 4 = \$25,001-\$40,000; 5 = cars worth more than \$40,000. Vehicle value is a reliable predictor of SES.[^15]
+
+[^15]: Frank, R.H. (1999). *Luxury Fever: Why Money Fails to Satisfy in an Era of Excess*. New York: The Free Press.
+
+#### Procedure
+
+Coders positioned themselves unobtrusively at all-way stop intersections. For example, they sat at bus stops, in parked cars, or feigned phone conversations. Coders pseudo-randomly selected approaching vehicles for coding, with the constraint that vehicles approaching empty intersections were not selected, and commercial vehicles were not selected. Prior to stopping, the estimated value of each selected vehicle was recorded using the vehicle value scale described above, and the amount of traffic was measured---i.e., coders noted the number of lanes in the intersection in which other cars were already queued (see @fig-intersection). Coders then observed whether drivers waited their turn before proceeding through the intersection, or whether they jumped the queue and cut off other drivers, in violation of California Vehicle Code. As drivers pulled away, their perceived sex and age (1 = 16-35 years old; 2 = 36-55; 3 = 56 and older) were recorded, as well as the time of day.
+
+![One of the intersections observed in the study was at Voight and Gilman in La Jolla, California. Lanes entering the intersection are marked with the word *STOP*. The amount of traffic that drivers dealt with was quantified as the number of lanes that were already occupied by other vehicles as drivers approached. For example, if there were vehicles waiting in two other lanes as a driver approached, then traffic was coded as two. Image courtesy of Google.](images/intersection.jpg){#fig-intersection width="700"}
+
+Bayesian hierarchical logistic regression was used to model the relationship between vehicle value and cutting.[^16]^,^[^17]^,^[^18] The clustering of datapoints by coder and intersection was taken into account by modeling coder and intersection as random effects with the maximal random effects structure.[^19] The main predictor variables of interest were vehicle value, traffic, and their interaction, with traffic recoded as *heavy* versus *light* to simplify presentation of the results (heavy: traffic values of three or more; light: traffic values of one or two). Covariates included driver sex, driver age, and time of day.
+
+[^16]: Burkner, P. (2018). Advanced Bayesian multilevel modeling with the R package brms. *The R Journal*, 10(1), 395-411.
+
+[^17]: Stan Development Team. (2021). *Stan Modeling Language Users Guide and Reference Manual*, Version 2.28. Retrieved from https://mc-stan.org.
+
+[^18]: R Core Team. (2021). *R: A Language and Environment for Statistical Computing*. Vienna, Austria: R Foundation for Statistical Computing.
+
+[^19]: Barr, D.J., Levy, R., Scheepers, C., & Tily, H.J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. *Journal of Memory and Language*, 68, 255-278.
+
+### Results
+
+```{r stats, echo = FALSE}
+
+# Whole model fixed effects
+fixed_effects <- fixef(fit)
+fixed_names <- row.names(fixed_effects)
+fixed_effects <- fixed_effects %>%
+    as_tibble() %>%
+    mutate(effect = fixed_names) %>%
+    select(effect, Estimate, Q2.5, Q97.5)
+
+# 88% CrI for interaction effect. This is the largest interval at which the
+# interval doesn't include 0.
+inter_88 <- posterior_interval(fit,
+                   variable = "b_c_vehicle_status:c_traffic_heavy",
+                   prob = 0.88)
+
+# Light model fixed effects
+fixed_eff_light <- fixef(fit_light)
+fixed_names_light <- row.names(fixed_eff_light)
+fixed_eff_light <- fixed_eff_light %>%
+    as_tibble() %>%
+    mutate(effect = fixed_names_light) %>%
+    select(effect, Estimate, Q2.5, Q97.5)
+
+# Heavy model fixed effects
+fixed_eff_heavy <- fixef(fit_heavy)
+fixed_names_heavy <- row.names(fixed_eff_heavy)
+fixed_eff_heavy <- fixed_eff_heavy %>%
+    as_tibble() %>%
+    mutate(effect = fixed_names_heavy) %>%
+    select(effect, Estimate, Q2.5, Q97.5)
+```
+
+778 drivers were observed at 46 all-way stop intersections. 88% of the data were collected in San Diego County, 8% in Los Angeles County, and 4% in Orange County. Nineteen of the 778 drivers, accounting for 2.4% of the data, were excluded from analysis, either because they were not visible enough to record their sex and age, or because it was not possible to definitively determine whether a cut had occurred (e.g., due to pedestrians or cyclists disrupting the queue). This left analyzable data from 759 drivers.
+
+The overall data pattern is illustrated below in @fig-results. Drivers of higher value vehicles cut more than drivers of lower value vehicles, *B* = `r fixed_effects %>% filter(effect == "c_vehicle_status") %>% pull(Estimate) %>% format(digits = 1, nsmall = 2)`, 95% CrI \[`r fixed_effects %>% filter(effect == "c_vehicle_status") %>% pull(Q2.5) %>% format(digits = 1, nsmall = 2)`, `r fixed_effects %>% filter(effect == "c_vehicle_status") %>% pull(Q97.5) %>% format(digits = 1, nsmall = 2)`\]. Drivers cut more under heavy traffic conditions, *B* = `r fixed_effects %>% filter(effect == "c_traffic_heavy") %>% pull(Estimate) %>% format(digits = 1, nsmall = 2)`, 95% CrI \[`r fixed_effects %>% filter(effect == "c_traffic_heavy") %>% pull(Q2.5) %>% format(digits = 1, nsmall = 2)`, `r fixed_effects %>% filter(effect == "c_traffic_heavy") %>% pull(Q97.5) %>% format(digits = 1, nsmall = 2)`\]. And while the interaction of vehicle value and traffic was not credibly different from zero at the 95% level, *B* = `r fixed_effects %>% filter(effect == "c_vehicle_status:c_traffic_heavy") %>% pull(Estimate) %>% format(digits = 1, nsmall = 2)`, \[`r fixed_effects %>% filter(effect == "c_vehicle_status:c_traffic_heavy") %>% pull(Q2.5) %>% format(digits = 1, nsmall = 2)`, `r fixed_effects %>% filter(effect == "c_vehicle_status:c_traffic_heavy") %>% pull(Q97.5) %>% format(digits = 1, nsmall = 2)`\], it was at the 88% level, \[`r inter_88[1, 1] %>% format(digits = 1, nsmall = 2)`, `r inter_88[1, 2] %>% format(digits = 1, nsmall = 2)`\]. All other effects were null.
+
+```{r results, echo = FALSE}
+#| label: fig-results
+#| fig-cap: "Probability of cutting as a function of vehicle value and traffic. Lines represent predicted means. Shading shows 95% credible intervals."
+ 
+# Table relating vehicle status values to their centered versions
+status_tbl <- df %>%
+    select(vehicle_status) %>%
+    unique() %>%
+    arrange(vehicle_status) %>%
+    mutate(c_vehicle_status = vehicle_status - mean(df$vehicle_status))
+
+# Table relating traffic values to their centered versions
+traffic_tbl <- df %>%
+    select(traffic_heavy) %>%
+    unique() %>%
+    arrange(traffic_heavy) %>%
+    mutate(c_traffic_heavy = traffic_heavy - mean(df$traffic_heavy))
+
+# Table of conditions to make predictions for. Note that male, driver age, and
+# time hours are set to their centered values of 0.
+new_data <- expand.grid(
+    c_vehicle_status = unique(df$c_vehicle_status),
+    c_traffic_heavy = unique(df$c_traffic_heavy),
+    c_male = 0,
+    c_driver_age = 0,
+    c_time_hours = 0) %>%
+    as_tibble()
+new_data$cond_num <- 1:nrow(new_data)
+
+# Generate log-odds predictions for new data
+pred_lodds <- posterior_linpred(
+    fit,
+    newdata = new_data,
+    re_formula = NA) %>%
+    as.data.frame()
+
+# Summarize log-odds predictions across all samples for each condition, then
+# convert to probabilities.
+pred_probs <- map_dfr(1:ncol(pred_lodds), function(col){
+    tibble(cond_num = col,
+           mean = mean(pred_lodds[, col]),
+           lower95 = quantile(pred_lodds[, col], probs = 0.025),
+           upper95 = quantile(pred_lodds[, col], probs = 0.975),
+           lower88 = quantile(pred_lodds[, col], probs = 0.06),
+           upper88 = quantile(pred_lodds[, col], probs = 0.94))
+}) %>%
+    mutate(across(where(is.double), plogis)) %>%
+    left_join(new_data %>%
+                  select(cond_num, c_vehicle_status, c_traffic_heavy),
+              by = "cond_num") %>%
+    left_join(status_tbl, by = "c_vehicle_status") %>%
+    left_join(traffic_tbl, by = "c_traffic_heavy")
+
+# Visualize interaction
+pred_probs %>%
+    mutate(Traffic = if_else(traffic_heavy == 1, "Heavy", "Light")) %>%
+    ggplot(mapping = aes(x = vehicle_status,
+                         y = mean,
+                         group = Traffic)) +
+    geom_ribbon(aes(ymin = lower95, ymax = upper95,
+                    fill = Traffic), alpha = 0.15) +
+    # geom_ribbon(aes(ymin = lower88, ymax = upper88,
+    #                 fill = Traffic), alpha = .1) +
+    geom_line(aes(color = Traffic)) +
+    scale_x_continuous(name = "Vehicle Value") +
+    scale_y_continuous(name = "P(Cut)", limits = c(0, 1)) +
+    scale_color_brewer(type = "qual", palette = "Set1") +
+    scale_fill_brewer(type = "qual", palette = "Set1")
+```
+
+Two additional models were fit in order to follow up on the interaction of vehicle value and traffic. The *light model* was based on data from the light traffic condition only (the blue line in @fig-results). Results from the light model demonstrate that drivers of higher value vehicles cut more than drivers of lower value vehicles under light traffic conditions, *B* = `r fixed_eff_light %>% filter(effect == "c_vehicle_status") %>% pull(Estimate) %>% format(digits = 1, nsmall = 2)`, 95% CrI \[`r fixed_eff_light %>% filter(effect == "c_vehicle_status") %>% pull(Q2.5) %>% format(digits = 1, nsmall = 2)`, `r fixed_eff_light %>% filter(effect == "c_vehicle_status") %>% pull(Q97.5) %>% format(digits = 1, nsmall = 2)`\]. In contrast, the *heavy model*---which was based on data from the heavy traffic condition only (the red line in @fig-results)---showed a null effect of vehicle value on cutting, *B* = `r fixed_eff_heavy %>% filter(effect == "c_vehicle_status") %>% pull(Estimate) %>% format(digits = 1, nsmall = 2)`, 95% CrI \[`r fixed_eff_heavy %>% filter(effect == "c_vehicle_status") %>% pull(Q2.5) %>% format(digits = 1, nsmall = 2)`, `r fixed_eff_heavy %>% filter(effect == "c_vehicle_status") %>% pull(Q97.5) %>% format(digits = 1, nsmall = 2)`\].
+
+## Discussion
+
+In the present work, 759 drivers were inconspicuously observed as they navigated all-way stop intersections in Southern California. Coders rated the value of drivers’ vehicles and noted whether they waited their turn in the queues that formed at intersections, or illegally cut. The results demonstrate that drivers of more expensive vehicles were more likely to cut than drivers of less expensive vehicles, even when statistically accounting for the contributions of traffic, driver sex, driver age, and time of day. This replicates Piff et al.’s finding of a positive correlation between driver SES and cutting, and undercuts Francis’ suggestion that the Piff et al. results are spurious.
+
+The present findings build on Piff et al.’s work in two important ways. First, the results demonstrate that the outcome of Piff et al.’s Study 1 was not determined by the particular drivers or intersection studied. We show that the relationship between driver SES and cutting generalizes to a much larger sample of drivers (759 vs. 274) navigating a much larger set of intersections (46 vs. one) in a different geographic region of the country (Southern California vs. the San Francisco Bay Area).
+
+Second, the present work provides a more detailed investigation of the socio-cognitive mechanisms that might account for driver behavior at all-way stop intersections. Piff et al. emphasized the role that attitudes towards greed play in contributing to an array of unethical behaviors. But while the greed hypothesis is well-suited to explaining unethical behavior in the pursuit of material gain, its ability to account for cutting---which does not straightforwardly result in material gain---is questionable. Instead, we hypothesized that higher SES cutting might be accidental, and outlined an account in which it tends to be especially prevalent under high traffic conditions (see @fig-predictions): higher SES drivers are able to keep track of the simpler queues that form in light traffic, but fail to devote adequate attentional resources to keeping track of the more complex queues that form in heavy traffic. They essentially lose their place in heavy traffic queues, and are thus more likely to cut accidentally.
+
+While we did find evidence of an interaction between driver SES and traffic (see @fig-results), it did not match the predictions of the accidental cutting hypothesis. Crucially, the accidental cutting hypothesis asserts that there should be a weaker effect of SES on cutting in light traffic, because light traffic queues are simpler, and the amount of attention that higher SES individuals devote to other drivers in the queue is sufficient to successfully track simpler queues. Instead however, we found that the only reliable effects of SES on cutting occurred when traffic was light.
+
+What might account for this data pattern? Regarding the light traffic results, it might be possible to save an attentional account by claiming that even the presence of vehicles in one or two other lanes is enough to outstrip the attentional resources that higher SES drivers devote to tracking the queue. But such a move would strain credulity, since it would in effect be claiming that subtle class-related differences in attention to others lead to large behavioral differences, even on relatively simple tasks like keeping track of one's place in a queue with only two other people. A more straightforward conclusion is that increased cutting among higher SES individuals is not accidental. Rather, it reflects the increased self-interest and reduced compassion found in other studies. Higher SES drivers seem to be violating ethical and legal norms because it allows them to do what they want to do: navigate through an all-way stop intersection a little bit faster.
+
+The shape of the vehicle value-by-traffic interaction is unexpected and merits further study. Lower SES drivers show traffic effects, whereas higher SES drivers do not. One way to interpret these results is that higher SES drivers are already at ceiling when it comes to cutting---that is, they're cutting at their maximum rate when traffic is light, so adding additional traffic has no effect. In contrast, lower SES drivers aren't already at ceiling when traffic is light, hence the increase in cutting under heavy traffic. This account assumes that a ceiling exists---that whether drivers are cutting accidentally or not, there is some maximum level of cutting that they tend to avoid. There may be perfectly natural reasons for such a ceiling. For example, if the rate of cutting were very high (e.g., at 50%) then intersections would become difficult to navigate---one could never predict whether other drivers would obey the queue or cut. What we're seeing in the present data however, is that intersections seem to function well enough---if not entirely equitably---when lower levels of cutting are present.
+
+To conclude, this study investigated the relationship between unethical behavior and social class by considering a specific type of unethical behavior: cutting at all-way stop intersections. We (1) introduced new data demonstrating that higher SES drivers are more likely to cut than lower SES drivers, (2) argued that high SES cutting does not seem to be accidental, and (3) noted that our results are consistent with other studies showing that higher SES individuals are prone to unethical behavior when attempting to maximize their own self-interest.
