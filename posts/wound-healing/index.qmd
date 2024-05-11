@@ -1,7 +1,8 @@
 ---
-title: "Integration of microbiome, metabolome, and clinical markers to predict wound healing"
-author: "Jeremy Boyd, Ph.D."
-date: now
+title: Integration of microbiome, metabolome, and clinical markers to predict wound healing
+author: Jeremy Boyd
+date: "2024-05-11"
+date-modified: "`r format(Sys.Date(), '%B %d, %Y')`"
 date-format: long
 format:
     html:
@@ -20,6 +21,7 @@ categories:
   - wound healing
   - -omics integration
   - diabetes
+image: figures/network38.svg
 ---
 
 ## Introduction
@@ -460,7 +462,7 @@ tidygraph_nicely <- tbl_graph(nodes = nodes2,
 set.seed(2)
 tidygraph_nicely %>%
     ggraph("igraph", algorithm = "nicely") +
-    geom_edge_link(color = "gray80", edge_width = .05) +
+    geom_edge_link(color = "gray50", edge_width = .05) +
     geom_node_point(aes(color = block, shape = high_expr), size = 2.5) +
     geom_node_text(aes(label = label2)
                    ,size = 3.5
@@ -482,6 +484,7 @@ tidygraph_nicely %>%
           legend.position.inside = c(0.8, 0.3)) +
     guides(color = guide_legend(title = "Block", order = 1),
            shape = guide_legend(title = "Higher Expression", order = 2))
+ggsave(filename = "figures/network38.svg")
 
 ```
 
