@@ -16,6 +16,7 @@ library(ggtext)         # Apply styling to axis labels
 library(glue)
 library(gt)
 library(janitor)        # adorn_totals() to add total row to tables
+library(svglite)
 # library(rbbt)           # Zotero citations
 
 # Resolve conflicts
