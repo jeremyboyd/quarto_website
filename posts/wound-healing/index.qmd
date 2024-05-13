@@ -2,7 +2,7 @@
 title: Integration of microbiome, metabolome, and clinical markers to predict wound healing
 author: Jeremy Boyd
 date: "2024-05-11"
-date-modified: "`r format(Sys.Date(), '%B %d, %Y')`"
+date-modified: now
 date-format: long
 format:
     html:

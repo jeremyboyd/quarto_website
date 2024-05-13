@@ -3,7 +3,7 @@ title: Do wealthier drivers cut more at all-way stop intersections?
 subtitle: An observational study of 759 drivers navigating 46 intersections across Southern California
 author: Jeremy Boyd
 date: "2021-10-25"
-date-modified: "`r format(Sys.Date(), '%B %d, %Y')`"
+date-modified: now
 categories:
   - unethical behavior
   - social class
