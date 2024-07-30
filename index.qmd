@@ -1,7 +1,9 @@
 ---
 title: "About"
-bibliography: references.bib
-csl: apa.csl
+bibliography: references.json
+csl: cambridge-university-press-numeric.csl
+nocite: |
+   @madaras-kelly2024, @madaras-kelly2024a, @goldberg2015, @scudder2014a, @boyd2014, @boyd2012b, @boyd2012, @wonnacott2012, @johnson2012, @boyd2011, @boyd2009a, @boyd2009a, @boyd2006
 ---
 
 I'm a Health Data Scientist in the Research Department at the Boise VA Medical Center. My training is in cognitive science and includes expertise in building statistical and machine learning models, and creating and managing databases. I've applied these skills over the course of my career in various capacities: (1) as a research scientist at several academic institutions studying language learning, (2) doing organizational science in industry, and (3) at the U.S. Department of Veterans Affairs working on biomedical studies.
@@ -26,34 +28,5 @@ I'm a Health Data Scientist in the Research Department at the Boise VA Medical C
 
 ## Publications
 
-```{r}
-#| include: false
-
-# Method for publications is to automatically generate, then paste into the correct order seen below.
-```
-
--   Madaras-Kelly, K., Boyd, J. K., & Bond, L. (2024a). A comparative effectiveness analysis of telehealth versus primary care and the impact of urine culture collection on outcome in patients with urinary tract infections. *Manuscript in preparation*.
-
--   Madaras-Kelly, K., Boyd, J. K., & Bond, L. (2024b). Comparative effectiveness of oral antibiotics to treat urinary tract infections in male and female outpatients. *Manuscript submitted for publication*.
-
--   Goldberg, A. E., & Boyd, J. K. (2015). A-adjectives, statistical preemption, and the evidence: Reply to Yang (2015). *Language*, *91*(4), e184–e197. <https://muse.jhu.edu/pub/24/article/604092>
-
--   Scudder, M. R., Federmeier, K. D., Raine, L. B., Direito, A., Boyd, J. K., & Hillman, C. H. (2014). The association between aerobic fitness and language processing in children: Implications for academic achievement. *Brain and Cognition*, *87*, 140–152. <https://doi.org/10.1016/j.bandc.2014.03.016>
-
--   Boyd, J. K. (2014). Statistical pre-emption. In P. J. Brooks & V. Kempe (Eds.), *Encyclopedia of Language Development* (pp. 608–610). SAGE Publications. <https://us.sagepub.com/en-us/nam/encyclopedia-of-language-development/book239623>
-
--   Boyd, J. K., Ackerman, F., & Kutas, M. (2012). Adult learners use both entrenchment and preemption to infer grammatical constraints. *2012 IEEE International Conference on Development and Learning and Epigenetic Robotics (ICDL)*, 1–2. <https://ieeexplore.ieee.org/abstract/document/6400820?casa_token=ji9jo3CIMB4AAAAA:nG7npVx5yP4LOpjChYxM9SWkI2okZ8Q4xfgB4Ga5_eO9jRwJa65eRByav2wytCDH0CZb5UY>
-
--   Boyd, J. K., & Goldberg, A. E. (2012). Young children fail to fully generalize a novel argument structure construction when exposed to the same input as older learners. *Journal of Child Language*, *39*(3), 457–481. <https://doi.org/10.1017/S0305000911000079>
-
--   Wonnacott, E., Boyd, J. K., Thomson, J., & Goldberg, A. E. (2012). Input effects on the acquisition of a novel phrasal construction in 5 year olds. *Journal of Memory and Language*, *66*(3), 458–478. <https://doi.org/10.1016/j.jml.2011.11.004>
-
--   Johnson, M. A., Boyd, J. K., & Goldberg, A. E. (2012). Construction learning in children with autism. In A. Biller, E. Chung, & A. Kimball (Eds.), *Proceedings of the Thirty-Sixth Annual Boston University Conference on Language Development: Supplemental* (pp. 1–15). <https://www.bu.edu/bucld/proceedings/supplement/vol36/>
-
--   Boyd, J. K., & Goldberg, A. E. (2011). Learning what not to say: The role of statistical preemption and categorization in a-adjective production. *Language*, *87*(1), 55–83. <https://www.jstor.org/stable/23011540>
-
--   Boyd, J. K., Gottschalk, E. A., & Goldberg, A. E. (2009). Linking rule acquisition in novel phrasal constructions. *Language Learning*, *59*(s1), 64–89. <https://doi.org/10.1111/j.1467-9922.2009.00536.x>
-
--   Boyd, J. K., & Goldberg, A. E. (2009). Input effects within a constructionist framework. *The Modern Language Journal*, *93*(3), 418–429. <https://doi.org/10.1111/j.1540-4781.2009.00899.x>
-
--   Boyd, J. (2006). On the representational status of /s/-clusters. *San Diego Linguistic Papers, 2*, 39-84. <https://escholarship.org/uc/item/23d0h28m>
+::: {#refs}
+:::
