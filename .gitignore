@@ -9,3 +9,4 @@ renv
 .DS_Store
 /.quarto/
 *.svg
+*.csl
