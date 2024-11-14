@@ -2,6 +2,66 @@
     {
         "author": [
             {
+                "family": "Taylor",
+                "given": "Ian"
+            },
+            {
+                "family": "Boyd",
+                "given": "Jeremy K."
+            },
+            {
+                "family": "Ammons",
+                "given": "Mary Cloud B."
+            }
+        ],
+        "container-title": "Manuscript in preparation",
+        "id": "taylor2024",
+        "issued": {
+            "date-parts": [
+                [
+                    2024
+                ]
+            ]
+        },
+        "key": "TAWC4CT3",
+        "libraryid": "1",
+        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "title": "Genetic and social determinants of Long COVID among Idaho veterans",
+        "type": "article-journal"
+    },
+    {
+        "author": [
+            {
+                "family": "Anders",
+                "given": "C.B."
+            },
+            {
+                "family": "Boyd",
+                "given": "J.K."
+            },
+            {
+                "family": "Ammons",
+                "given": "M.C.B"
+            }
+        ],
+        "container-title": "Manuscript in preparation",
+        "id": "anders2024",
+        "issued": {
+            "date-parts": [
+                [
+                    2024
+                ]
+            ]
+        },
+        "key": "9S7T2465",
+        "libraryid": "1",
+        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "title": "Predicting wound healing: A machine learning partial least squares discriminant analysis model utilizing microbiome, metabolome, and clinical marker data sets",
+        "type": "article-journal"
+    },
+    {
+        "author": [
+            {
                 "family": "Madaras-Kelly",
                 "given": "Karl"
             },
@@ -10,7 +70,8 @@
                 "given": "Jeremy K."
             },
             {
-                "family": "Bond, Laura"
+                "family": "Bond",
+                "given": "Laura"
             }
         ],
         "container-title": "Manuscript submitted for publication",
@@ -39,7 +100,8 @@
                 "given": "Jeremy K."
             },
             {
-                "family": "Bond, Laura"
+                "family": "Bond",
+                "given": "Laura"
             }
         ],
         "container-title": "Manuscript submitted for publication",
