@@ -10,3 +10,4 @@ renv
 /.quarto/
 *.svg
 *.csl
+*.Rproj
