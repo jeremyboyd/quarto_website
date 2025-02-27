@@ -3,8 +3,16 @@ title: "About"
 bibliography: references.json
 csl: apa-numeric-superscript-brackets.csl
 nocite: |
-   @taylor2024, @anders2024, @madaras-kelly2024, @madaras-kelly2024a, @goldberg2015, @scudder2014a, @boyd2014, @boyd2012b, @boyd2012, @wonnacott2012, @johnson2012, @boyd2011, @boyd2009a, @boyd2009a, @boyd2009, @boyd2006
+   @anders2025, @taylor2025, @madaras-kelly2025, @madaras-kelly2025a, @doucette2025, @goldberg2015, @scudder2014a, @boyd2014, @boyd2012b, @boyd2012, @wonnacott2012, @johnson2012, @boyd2011, @boyd2009a, @boyd2009, @boyd2006
 ---
+
+```{r}
+#| include: false
+#| eval: false
+
+# Easiest way to update publications list: (1) update in Zotero, (2) delete references.json, (3) Use Insert > Citation to add citations in the order given under nocite in YAML, (4) remove in-text citations, (5) knit.
+
+```
 
 I'm a Health Data Scientist in the Research Department at the Boise VA Medical Center. My Ph.D. training was in cognitive science and neuroscience and includes expertise in building statistical and machine learning models, and creating and managing databases. I've applied these skills over the course of my career in various capacities: (1) as a research scientist at several academic institutions studying language learning, (2) doing organizational science in industry, and (3) at the U.S. Department of Veterans Affairs working on biomedical studies.
 

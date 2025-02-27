@@ -2,6 +2,36 @@
     {
         "author": [
             {
+                "family": "Anders",
+                "given": "Catherine B."
+            },
+            {
+                "family": "Boyd",
+                "given": "Jeremy K."
+            },
+            {
+                "family": "Ammons",
+                "given": "Mary Cloud B."
+            }
+        ],
+        "container-title": "Manuscript in preparation",
+        "id": "anders2025",
+        "issued": {
+            "date-parts": [
+                [
+                    2025
+                ]
+            ]
+        },
+        "key": "9S7T2465",
+        "libraryid": "1",
+        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "title": "Predicting wound healing: A machine learning partial least squares discriminant analysis model utilizing microbiome, metabolome, and clinical marker data sets",
+        "type": "article-journal"
+    },
+    {
+        "author": [
+            {
                 "family": "Taylor",
                 "given": "Ian"
             },
@@ -15,48 +45,18 @@
             }
         ],
         "container-title": "Manuscript in preparation",
-        "id": "taylor2024",
+        "id": "taylor2025",
         "issued": {
             "date-parts": [
                 [
-                    2024
+                    2025
                 ]
             ]
         },
         "key": "TAWC4CT3",
         "libraryid": "1",
         "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "title": "Genetic and social determinants of Long COVID among Idaho veterans",
-        "type": "article-journal"
-    },
-    {
-        "author": [
-            {
-                "family": "Anders",
-                "given": "C.B."
-            },
-            {
-                "family": "Boyd",
-                "given": "J.K."
-            },
-            {
-                "family": "Ammons",
-                "given": "M.C.B"
-            }
-        ],
-        "container-title": "Manuscript in preparation",
-        "id": "anders2024",
-        "issued": {
-            "date-parts": [
-                [
-                    2024
-                ]
-            ]
-        },
-        "key": "9S7T2465",
-        "libraryid": "1",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "title": "Predicting wound healing: A machine learning partial least squares discriminant analysis model utilizing microbiome, metabolome, and clinical marker data sets",
+        "title": "A retrospective cohort study of viral and social determinants of long COVID among Idaho veterans",
         "type": "article-journal"
     },
     {
@@ -75,11 +75,41 @@
             }
         ],
         "container-title": "Manuscript submitted for publication",
-        "id": "madaras-kelly2024",
+        "id": "madaras-kelly2025a",
         "issued": {
             "date-parts": [
                 [
-                    2024
+                    2025
+                ]
+            ]
+        },
+        "key": "IRLJX4RJ",
+        "libraryid": "1",
+        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "title": "Comparative effectiveness of oral antibiotics to treat urinary tract infections in male and female outpatients",
+        "type": "article-journal"
+    },
+    {
+        "author": [
+            {
+                "family": "Madaras-Kelly",
+                "given": "Karl"
+            },
+            {
+                "family": "Boyd",
+                "given": "Jeremy K."
+            },
+            {
+                "family": "Bond",
+                "given": "Laura"
+            }
+        ],
+        "container-title": "Manuscript submitted for publication",
+        "id": "madaras-kelly2025",
+        "issued": {
+            "date-parts": [
+                [
+                    2025
                 ]
             ]
         },
@@ -92,32 +122,37 @@
     {
         "author": [
             {
-                "family": "Madaras-Kelly",
-                "given": "Karl"
+                "family": "Doucette",
+                "given": "Margaret"
+            },
+            {
+                "family": "Seabolt",
+                "given": "Stephanie"
+            },
+            {
+                "family": "Payne",
+                "given": "Kattie"
             },
             {
                 "family": "Boyd",
-                "given": "Jeremy K."
-            },
-            {
-                "family": "Bond",
-                "given": "Laura"
+                "given": "Jeremy"
             }
         ],
-        "container-title": "Manuscript submitted for publication",
-        "id": "madaras-kelly2024a",
+        "container-title": "Diabetology",
+        "id": "doucette2025",
         "issued": {
             "date-parts": [
                 [
-                    2024
+                    2025
                 ]
             ]
         },
-        "key": "IRLJX4RJ",
+        "key": "ZBVZJZGS",
         "libraryid": "1",
         "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "title": "Comparative effectiveness of oral antibiotics to treat urinary tract infections in male and female outpatients",
-        "type": "article-journal"
+        "title": "5-year follow-up of advanced therapy use in high-risk diabetic foot ulcers",
+        "type": "article-journal",
+        "volume": "6"
     },
     {
         "ISSN": "1535-0665",
@@ -498,74 +533,6 @@
         "title": "Linking rule acquisition in novel phrasal constructions",
         "type": "article-journal",
         "volume": "59"
-    },
-    {
-        "DOI": "10.1111/j.1467-9922.2009.00536.x",
-        "ISSN": "1467-9922",
-        "URL": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1467-9922.2009.00536.x",
-        "_eprint": "https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1467-9922.2009.00536.x",
-        "accessed": {
-            "date-parts": []
-        },
-        "author": [
-            {
-                "family": "Boyd",
-                "given": "Jeremy K."
-            },
-            {
-                "family": "Gottschalk",
-                "given": "Erin A."
-            },
-            {
-                "family": "Goldberg",
-                "given": "Adele E."
-            }
-        ],
-        "container-title": "Language Learning",
-        "id": "boyd2009a",
-        "issue": "s1",
-        "issued": {
-            "date-parts": [
-                [
-                    2009
-                ]
-            ]
-        },
-        "key": "EQGP9X6L",
-        "language": "en",
-        "libraryid": "1",
-        "note": "_eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1467-9922.2009.00536.x",
-        "page": "64-89",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "rights": "© 2009 Language Learning Research Club, University of Michigan",
-        "source": "Wiley Online Library",
-        "title": "Linking rule acquisition in novel phrasal constructions",
-        "type": "article-journal",
-        "volume": "59"
-    },
-    {
-        "author": [
-            {
-                "family": "Boyd",
-                "given": "Jeremy K."
-            }
-        ],
-        "id": "boyd2002",
-        "issue": "c",
-        "issued": {
-            "date-parts": [
-                [
-                    2002
-                ]
-            ]
-        },
-        "key": "BCI3ZH37",
-        "libraryid": "1",
-        "page": "1--7",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "title": "D O E NGLISH s -C LUSTERS D IFFER S TRUCTURALLY FROM O THER C ONSONANT S EQUENCES ? I . The Structure of word-initial consonant sequences II . Barlow ’ s ( 2001 ) analysis of word-initial onset acquisition for KR , a child with a phonological deficit",
-        "type": "article-journal",
-        "volume": "2002"
     },
     {
         "DOI": "10.1111/j.1540-4781.2009.00899.x",
