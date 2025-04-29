@@ -44,7 +44,7 @@
                 "given": "Mary Cloud B."
             }
         ],
-        "container-title": "Manuscript in preparation",
+        "container-title": "Manuscript submitted for publication",
         "id": "taylor2025",
         "issued": {
             "date-parts": [
@@ -75,7 +75,7 @@
             }
         ],
         "container-title": "Manuscript submitted for publication",
-        "id": "madaras-kelly2025a",
+        "id": "madaras-kelly2025",
         "issued": {
             "date-parts": [
                 [
@@ -83,10 +83,10 @@
                 ]
             ]
         },
-        "key": "IRLJX4RJ",
+        "key": "A4B7E6MT",
         "libraryid": "1",
         "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "title": "Comparative effectiveness of oral antibiotics to treat urinary tract infections in male and female outpatients",
+        "title": "A comparative effectiveness analysis of telehealth versus primary care and the impact of urine culture collection on outcome in patients with urinary tract infections",
         "type": "article-journal"
     },
     {
@@ -105,7 +105,7 @@
             }
         ],
         "container-title": "Manuscript submitted for publication",
-        "id": "madaras-kelly2025",
+        "id": "madaras-kelly2025a",
         "issued": {
             "date-parts": [
                 [
@@ -113,10 +113,10 @@
                 ]
             ]
         },
-        "key": "A4B7E6MT",
+        "key": "IRLJX4RJ",
         "libraryid": "1",
         "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "title": "A comparative effectiveness analysis of telehealth versus primary care and the impact of urine culture collection on outcome in patients with urinary tract infections",
+        "title": "Comparative effectiveness of oral antibiotics to treat urinary tract infections in male and female outpatients",
         "type": "article-journal"
     },
     {
@@ -155,6 +155,7 @@
         "volume": "6"
     },
     {
+        "DOI": "https://doi.org/10.1353/lan.2015.0052",
         "ISSN": "1535-0665",
         "URL": "https://muse.jhu.edu/pub/24/article/604092",
         "accessed": {
@@ -190,6 +191,42 @@
         "title-short": "A-adjectives, statistical preemption, and the evidence",
         "type": "article-journal",
         "volume": "91"
+    },
+    {
+        "URL": "https://sk.sagepub.com/ency/edvol/encyclopedia-of-language-development/chpt/statistical-preemption",
+        "author": [
+            {
+                "family": "Boyd",
+                "given": "Jeremy K."
+            }
+        ],
+        "container-title": "Encyclopedia of Language Development",
+        "editor": [
+            {
+                "family": "Brooks",
+                "given": "Patricia J."
+            },
+            {
+                "family": "Kempe",
+                "given": "Vera"
+            }
+        ],
+        "id": "boyd2014",
+        "issued": {
+            "date-parts": [
+                [
+                    2014
+                ]
+            ]
+        },
+        "key": "8M643IGH",
+        "libraryid": "1",
+        "page": "608-610",
+        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "publisher": "SAGE Publications",
+        "publisher-place": "Thousand Oaks, CA",
+        "title": "Statistical pre-emption",
+        "type": "chapter"
     },
     {
         "DOI": "10.1016/j.bandc.2014.03.016",
@@ -245,42 +282,6 @@
         "title-short": "The association between aerobic fitness and language processing in children",
         "type": "article-journal",
         "volume": "87"
-    },
-    {
-        "URL": "https://us.sagepub.com/en-us/nam/encyclopedia-of-language-development/book239623",
-        "author": [
-            {
-                "family": "Boyd",
-                "given": "Jeremy K."
-            }
-        ],
-        "container-title": "Encyclopedia of Language Development",
-        "editor": [
-            {
-                "family": "Brooks",
-                "given": "Patricia J."
-            },
-            {
-                "family": "Kempe",
-                "given": "Vera"
-            }
-        ],
-        "id": "boyd2014",
-        "issued": {
-            "date-parts": [
-                [
-                    2014
-                ]
-            ]
-        },
-        "key": "8M643IGH",
-        "libraryid": "1",
-        "page": "608-610",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "publisher": "SAGE Publications",
-        "publisher-place": "Thousand Oaks, CA",
-        "title": "Statistical pre-emption",
-        "type": "chapter"
     },
     {
         "DOI": "10.1109/DevLrn.2012.6400820",
@@ -454,6 +455,7 @@
         "type": "chapter"
     },
     {
+        "DOI": "https://doi.org/10.1353/lan.2011.0012",
         "ISSN": "0097-8507",
         "URL": "https://www.jstor.org/stable/23011540",
         "accessed": {
