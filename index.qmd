@@ -26,7 +26,7 @@ I'm a Health Data Scientist in the Research Department at the Boise VA Medical C
 
 ## Employment
 
--   Health Data Scientist. (2022-present). [U.S. Department of Veterans Affairs](https://www.va.gov/). Boise, ID.
+-   Health Data Scientist. (2022-present). [U.S. Department of Veterans Affairs](https://www.va.gov/) and [Idaho Veterans Research & Education Foundation](https://ivref.org/). Boise, ID.
 -   Data Science Consultant. (2012-present). Boise, ID.
 -   People Data Scientist. (2015-2020). [Micron Technology, Inc.](https://www.micron.com/). Boise, ID.
 -   Lecturer. (2013-2015). Human Development Program. [University of California, San Diego](https://ucsd.edu/). La Jolla, CA.
