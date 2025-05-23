@@ -2,6 +2,44 @@
     {
         "author": [
             {
+                "family": "Weppner",
+                "given": "Willian G."
+            },
+            {
+                "family": "Singh",
+                "given": "Hardeep"
+            },
+            {
+                "family": "Boyd",
+                "given": "Jeremy"
+            },
+            {
+                "family": "Smith",
+                "given": "Garrett"
+            },
+            {
+                "family": "Chesebro",
+                "given": "Brian"
+            }
+        ],
+        "container-title": "Manuscript in preparation",
+        "id": "weppner2025",
+        "issued": {
+            "date-parts": [
+                [
+                    2025
+                ]
+            ]
+        },
+        "key": "WS93RE49",
+        "libraryid": "1",
+        "providerkey": "Zotero",
+        "title": "Greenhouse gas emissions from inhaled medications: An assessment of a national health system",
+        "type": "article-journal"
+    },
+    {
+        "author": [
+            {
                 "family": "Anders",
                 "given": "Catherine B."
             },
@@ -25,7 +63,7 @@
         },
         "key": "9S7T2465",
         "libraryid": "1",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "title": "Predicting wound healing: A machine learning partial least squares discriminant analysis model utilizing microbiome, metabolome, and clinical marker data sets",
         "type": "article-journal"
     },
@@ -55,7 +93,7 @@
         },
         "key": "TAWC4CT3",
         "libraryid": "1",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "title": "A retrospective cohort study of viral and social determinants of long COVID among Idaho veterans",
         "type": "article-journal"
     },
@@ -85,7 +123,7 @@
         },
         "key": "A4B7E6MT",
         "libraryid": "1",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "title": "A comparative effectiveness analysis of telehealth versus primary care and the impact of urine culture collection on outcome in patients with urinary tract infections",
         "type": "article-journal"
     },
@@ -115,7 +153,7 @@
         },
         "key": "IRLJX4RJ",
         "libraryid": "1",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "title": "Comparative effectiveness of oral antibiotics to treat urinary tract infections in male and female outpatients",
         "type": "article-journal"
     },
@@ -149,7 +187,7 @@
         },
         "key": "ZBVZJZGS",
         "libraryid": "1",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "title": "5-year follow-up of advanced therapy use in high-risk diabetic foot ulcers",
         "type": "article-journal",
         "volume": "6"
@@ -184,7 +222,7 @@
         "key": "RAA8WTRR",
         "libraryid": "1",
         "page": "e184-e197",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "publisher": "Linguistic",
         "source": "Project MUSE",
         "title": "A-adjectives, statistical preemption, and the evidence: Reply to Yang (2015)",
@@ -222,7 +260,7 @@
         "key": "8M643IGH",
         "libraryid": "1",
         "page": "608-610",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "publisher": "SAGE Publications",
         "publisher-place": "Thousand Oaks, CA",
         "title": "Statistical pre-emption",
@@ -276,7 +314,7 @@
         "key": "LHH4MUV4",
         "libraryid": "1",
         "page": "140-152",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "source": "ScienceDirect",
         "title": "The association between aerobic fitness and language processing in children: Implications for academic achievement",
         "title-short": "The association between aerobic fitness and language processing in children",
@@ -318,7 +356,7 @@
         "key": "QRM9VX8J",
         "libraryid": "1",
         "page": "1-2",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "source": "IEEE Xplore",
         "title": "Adult learners use both entrenchment and preemption to infer grammatical constraints",
         "type": "paper-conference"
@@ -355,7 +393,7 @@
         "language": "en",
         "libraryid": "1",
         "page": "457-481",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "source": "Cambridge University Press",
         "title": "Young children fail to fully generalize a novel argument structure construction when exposed to the same input as older learners",
         "type": "article-journal",
@@ -402,7 +440,7 @@
         "key": "3SMPPI4K",
         "libraryid": "1",
         "page": "458-478",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "source": "ScienceDirect",
         "title": "Input effects on the acquisition of a novel phrasal construction in 5 year olds",
         "type": "article-journal",
@@ -450,7 +488,7 @@
         "key": "YYR7TEYP",
         "libraryid": "1",
         "page": "1-15",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "title": "Construction learning in children with autism",
         "type": "chapter"
     },
@@ -484,7 +522,7 @@
         "key": "EL6JUHCE",
         "libraryid": "1",
         "page": "55-83",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "publisher": "Linguistic",
         "source": "JSTOR",
         "title": "Learning what not to say: The role of statistical preemption and categorization in a-adjective production",
@@ -529,7 +567,7 @@
         "libraryid": "1",
         "note": "_eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1467-9922.2009.00536.x",
         "page": "64-89",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "rights": "© 2009 Language Learning Research Club, University of Michigan",
         "source": "Wiley Online Library",
         "title": "Linking rule acquisition in novel phrasal constructions",
@@ -569,7 +607,7 @@
         "libraryid": "1",
         "note": "_eprint: https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1540-4781.2009.00899.x",
         "page": "418-429",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "rights": "©2009 The Modern Language Journal",
         "source": "Wiley Online Library",
         "title": "Input effects within a constructionist framework",
@@ -602,7 +640,7 @@
         "language": "en",
         "libraryid": "1",
         "page": "39-84",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "providerkey": "Zotero",
         "source": "escholarship.org",
         "title": "On the representational status of /s/-clusters",
         "type": "article-journal",
