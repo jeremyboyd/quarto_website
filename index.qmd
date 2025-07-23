@@ -10,7 +10,7 @@ nocite: |
 #| include: false
 #| eval: false
 
-# Easiest way to update publications list: (1) update in Zotero, (2) delete references.json, (3) Use Insert > Citation to add citations in the order given under nocite in YAML, (4) remove in-text citations, (5) knit.
+# Easiest way to update publications list: (1) update in Zotero, (2) delete any old reference from  references.json, (3) Use Insert > Citation to add citations in the order given under nocite in YAML, (4) remove in-text citations, (5) knit.
 
 ```
 

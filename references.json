@@ -128,10 +128,15 @@
         "type": "article-journal"
     },
     {
+        "DOI": "10.1097/MD.0000000000043172",
+        "URL": "https://journals.lww.com/md-journal/fulltext/2025/07180/the_comparative_effectiveness_of_telehealth_versus.57.aspx",
+        "accessed": {
+            "date-parts": []
+        },
         "author": [
             {
                 "family": "Madaras-Kelly",
-                "given": "Karl"
+                "given": "Karl J."
             },
             {
                 "family": "Boyd",
@@ -144,18 +149,25 @@
         ],
         "container-title": "Medicine",
         "id": "madaras-kelly2025",
+        "issue": "29",
         "issued": {
             "date-parts": [
                 [
-                    2025
+                    2025,
+                    7,
+                    18
                 ]
             ]
         },
-        "key": "A4B7E6MT",
+        "key": "UNJJJS3A",
+        "language": "en-US",
         "libraryid": "1",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "page": "e43172",
+        "providerkey": "Zotero",
+        "source": "journals.lww.com",
         "title": "The comparative effectiveness of telehealth versus primary care and collection of urine cultures on outcome in urinary tract infection",
-        "type": "article-journal"
+        "type": "article-journal",
+        "volume": "104"
     },
     {
         "DOI": "10.3390/diabetology6070061",
