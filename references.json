@@ -32,44 +32,6 @@
     {
         "author": [
             {
-                "family": "Weppner",
-                "given": "Willian G."
-            },
-            {
-                "family": "Singh",
-                "given": "Hardeep"
-            },
-            {
-                "family": "Boyd",
-                "given": "Jeremy"
-            },
-            {
-                "family": "Smith",
-                "given": "Garrett"
-            },
-            {
-                "family": "Chesebro",
-                "given": "Brian"
-            }
-        ],
-        "container-title": "Manuscript submitted for publication",
-        "id": "weppner2025",
-        "issued": {
-            "date-parts": [
-                [
-                    2025
-                ]
-            ]
-        },
-        "key": "WS93RE49",
-        "libraryid": "1",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "title": "Greenhouse gas emissions from inhaled medications: An assessment of a national health system",
-        "type": "article-journal"
-    },
-    {
-        "author": [
-            {
                 "family": "Taylor",
                 "given": "Ian"
             },
@@ -125,6 +87,44 @@
         "libraryid": "1",
         "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
         "title": "Comparative effectiveness of oral antibiotics to treat urinary tract infections in male and female outpatients",
+        "type": "article-journal"
+    },
+    {
+        "author": [
+            {
+                "family": "Weppner",
+                "given": "Willian G."
+            },
+            {
+                "family": "Singh",
+                "given": "Hardeep"
+            },
+            {
+                "family": "Boyd",
+                "given": "Jeremy"
+            },
+            {
+                "family": "Smith",
+                "given": "Garrett"
+            },
+            {
+                "family": "Chesebro",
+                "given": "Brian"
+            }
+        ],
+        "container-title": "JAMA",
+        "id": "weppner2025",
+        "issued": {
+            "date-parts": [
+                [
+                    2025
+                ]
+            ]
+        },
+        "key": "WS93RE49",
+        "libraryid": "1",
+        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "title": "A longitudinal assessment of greenhouse gas emissions from inhaler devices in a national health system",
         "type": "article-journal"
     },
     {

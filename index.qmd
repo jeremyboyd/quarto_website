@@ -3,7 +3,7 @@ title: "About"
 bibliography: references.json
 csl: apa-numeric-superscript-brackets.csl
 nocite: |
-   @anders2025, @weppner2025, @taylor2025, @madaras-kelly2025a, @madaras-kelly2025, @doucette2025, @goldberg2015, @boyd2014, @scudder2014a, @boyd2012b, @boyd2012, @wonnacott2012, @johnson2012, @boyd2011, @boyd2009a, @boyd2009, @boyd2006
+   @anders2025, @taylor2025, @madaras-kelly2025a, @weppner2025, @madaras-kelly2025, @doucette2025, @goldberg2015, @boyd2014, @scudder2014a, @boyd2012b, @boyd2012, @wonnacott2012, @johnson2012, @boyd2011, @boyd2009a, @boyd2009, @boyd2006
 ---
 
 ```{r}
