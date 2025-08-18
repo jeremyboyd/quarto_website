@@ -23,6 +23,7 @@ categories:
   - diabetes
   - matrix factorization
 image: figures/network38.svg
+draft: true
 ---
 
 ## Introduction
