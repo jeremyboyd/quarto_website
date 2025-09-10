@@ -1,5 +1,14 @@
 source("renv/activate.R")
 
+# Renv installation options: (1) use pak::pkg_install, which is faster, try to not install from source, download using curl, rely on Posit package manager, which can be more up-to-date.
+options(
+    renv.install.packages = pak::pkg_install,
+    renv.install.from.source = "never",
+    renv.download.method = "curl",
+    repos = c(
+        CRAN = "https://cloud.r-project.org",
+        RSPM = "https://packagemanager.posit.co/cran/latest"))
+
 library(tidyverse)
 library(readxl)
 library(ggpubr)         # Group multiple ggplots
