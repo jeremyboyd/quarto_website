@@ -127,10 +127,17 @@
         "type": "article-journal"
     },
     {
+        "id": "weppner2025",
+        "DOI": "10.1001/jama.2025.15638",
+        "ISSN": "0098-7484",
+        "URL": "https://doi.org/10.1001/jama.2025.15638",
+        "accessed": {
+            "date-parts": []
+        },
         "author": [
             {
                 "family": "Weppner",
-                "given": "Willian G."
+                "given": "William G."
             },
             {
                 "family": "Singh",
@@ -142,25 +149,28 @@
             },
             {
                 "family": "Smith",
-                "given": "Garrett"
+                "given": "Garret"
             },
             {
                 "family": "Chesebro",
-                "given": "Brian"
+                "given": "Brian B."
             }
         ],
         "container-title": "JAMA",
-        "id": "weppner2025",
+        "container-title-short": "JAMA",
         "issued": {
             "date-parts": [
                 [
-                    2025
+                    2025,
+                    10,
+                    6
                 ]
             ]
         },
-        "key": "WS93RE49",
+        "key": "8J3CUQ8T",
         "libraryid": "1",
         "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "source": "Silverchair",
         "title": "A longitudinal assessment of greenhouse gas emissions from inhaler devices in a national health system",
         "type": "article-journal"
     },
