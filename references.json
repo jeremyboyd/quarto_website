@@ -2,36 +2,6 @@
     {
         "author": [
             {
-                "family": "Madaras-Kelly",
-                "given": "Karl"
-            },
-            {
-                "family": "Boyd",
-                "given": "Jeremy K."
-            },
-            {
-                "family": "Bond",
-                "given": "Laura"
-            }
-        ],
-        "container-title": "Manuscript submitted for publication",
-        "id": "madaras-kelly2025a",
-        "issued": {
-            "date-parts": [
-                [
-                    2025
-                ]
-            ]
-        },
-        "key": "IRLJX4RJ",
-        "libraryid": "1",
-        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "title": "Comparative effectiveness of oral antibiotics to treat uncomplicated urinary tract infections in male outpatients",
-        "type": "article-journal"
-    },
-    {
-        "author": [
-            {
                 "family": "Taylor",
                 "given": "Ian"
             },
@@ -49,7 +19,7 @@
         "issued": {
             "date-parts": [
                 [
-                    2025
+                    2026
                 ]
             ]
         },
@@ -124,6 +94,36 @@
         "section": "New",
         "source": "bioRxiv",
         "title": "Multiblock integration and modeling of localized microbiome, metabolome, and clinical metadata to identify biomarkers predictive of outcome in veterans with non-healing wounds",
+        "type": "article-journal"
+    },
+    {
+        "author": [
+            {
+                "family": "Madaras-Kelly",
+                "given": "Karl"
+            },
+            {
+                "family": "Boyd",
+                "given": "Jeremy K."
+            },
+            {
+                "family": "Bond",
+                "given": "Laura"
+            }
+        ],
+        "container-title": "Journal of Comparative Effectiveness Research",
+        "id": "madaras-kelly2025a",
+        "issued": {
+            "date-parts": [
+                [
+                    2026
+                ]
+            ]
+        },
+        "key": "IRLJX4RJ",
+        "libraryid": "1",
+        "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
+        "title": "Comparative effectiveness of oral antibiotics to treat uncomplicated urinary tract infections in male outpatients",
         "type": "article-journal"
     },
     {
