@@ -6,7 +6,7 @@ website:
         location: navbar
         type: overlay
     page-footer:
-        center: "© 2025, Jeremy Boyd"
+        center: "© 2026, Jeremy Boyd"
     navbar:
         title: false
         logo: "logo.png"
