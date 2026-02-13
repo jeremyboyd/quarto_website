@@ -11,3 +11,5 @@ renv
 *.svg
 *.csl
 *.Rproj
+
+**/*.quarto_ipynb
