@@ -10,12 +10,16 @@
                 "given": "Jeremy K."
             },
             {
+                "family": "McIndoo",
+                "given": "Eric"
+            },
+            {
                 "family": "Ammons",
                 "given": "Mary Cloud B."
             }
         ],
-        "container-title": "Manuscript submitted for publication",
-        "id": "taylor2025",
+        "container-title": "Frontiers in Public Health",
+        "id": "taylor2026",
         "issued": {
             "date-parts": [
                 [
@@ -26,7 +30,7 @@
         "key": "TAWC4CT3",
         "libraryid": "1",
         "providerkey": "2509FBBE-5BB0-44C4-B119-6083A81ED673",
-        "title": "A retrospective cohort study of viral and social determinants of long COVID among Idaho veterans",
+        "title": "A retrospective cohort study of viral and sociodemographic determinants of long COVID among Idaho veterans",
         "type": "article-journal"
     },
     {
